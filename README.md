@@ -5,6 +5,9 @@ goreleaser
 notes pour malo
 
 * Gerer otf
+
+    test with https://velvetyne.fr/download/?font=karrik
+
 * Fonte variables = chaques graisses dans le pdf 
 * Pages avec un texte précis et responsive a la page sans coupure de texte
 * Pages avec un texte précis et corp de texte fixe, coupure du texte possible
