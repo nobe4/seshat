@@ -3,67 +3,91 @@ package main
 import (
 	"fmt"
 	"os"
+	"test/internal/font"
 	"time"
 
 	"github.com/tdewolff/canvas"
 	"github.com/tdewolff/canvas/renderers/pdf"
 )
 
-const lorem string = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam in dui mauris. Vivamus hendrerit arcu sed`
+const (
+	fontDir = "./font/OTF"
+	lorem   = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam in dui mauris. Vivamus hendrerit arcu sed`
+	outFile = "test.pdf"
 
-type FontMap struct {
-	name  string
-	style canvas.FontStyle
-}
+	// pdf size in points
+	width  = 210.0
+	height = 297.0
+)
 
 func main() {
-	fmt.Printf("Running at %s\n", time.Now().Format("2006-01-02 15:04:05"))
+	start := time.Now()
+	fmt.Printf("Start at %s\n", start.Format("15:04:05"))
 
-	f, err := os.Create("test.pdf")
+	f, err := os.Create(outFile)
 	if err != nil {
 		panic(err)
 	}
 	defer f.Close()
 
-	font := canvas.NewFontFamily("Lineal")
-	pdf := pdf.New(f, 210, 297, &pdf.Options{})
+	pdf := pdf.New(f, width, height, &pdf.Options{})
 
-	fontThicknesses := []FontMap{
-		{"Thin", canvas.FontThin},
-		{"Light", canvas.FontLight},
-		{"Regular", canvas.FontRegular},
-		{"Medium", canvas.FontMedium},
-		{"Bold", canvas.FontBold},
-		{"Black", canvas.FontBlack},
-		{"Heavy", canvas.FontExtraBold},
+	fonts, err := font.LoadFromDir(fontDir)
+	if err != nil {
+		panic(err)
 	}
 
-	y := 297.0
-	for _, s := range fontThicknesses {
-		if err := font.LoadFontFile("./font/OTF/Lineal-"+s.name+".otf", s.style); err != nil {
-			panic(err)
-		}
-
-		c := canvas.New(210, 297)
-		ctx := canvas.NewContext(c)
-
-		size := 30.0
-		// y := 297.0
-		// for y, i := 297.0, 20; y > 0 && i > 0; i-- {
-		face := font.Face(size, canvas.Black, s.style, canvas.FontNormal)
-
-		txt := canvas.NewTextBox(face, s.name+lorem, 210.0, 0.0, canvas.Left, canvas.Top, 0.0, 0.0)
-		ctx.DrawText(0, y, txt)
-
-		y -= txt.Bounds().H
-		size -= 1.5
-		// }
-
-		c.RenderTo(pdf)
-		// pdf.NewPage(210, 297)
-	}
+	loopSizeAndWeightWithFontName(pdf, fonts)
+	loopSizeAndWeightWithLorem(pdf, fonts)
 
 	if err := pdf.Close(); err != nil {
 		panic(err)
+	}
+
+	end := time.Now()
+	fmt.Printf("Ran at %s in %fs\n", end.Format("15:04:05"), end.Sub(start).Seconds())
+}
+
+func loopSizeAndWeightWithFontName(pdf *pdf.PDF, fonts font.Fonts) {
+	for _, font := range fonts {
+		c := canvas.New(width, height)
+		ctx := canvas.NewContext(c)
+
+		size := 50.0
+		for y, i := height, 30; y > 0 && i > 0; i-- {
+			face := font.Font.Face(size, canvas.Black)
+
+			txt := canvas.NewTextBox(face, font.Name, width, 0.0, canvas.Left, canvas.Top, 0.0, 0.0)
+			ctx.DrawText(0, y, txt)
+
+			y -= txt.Bounds().H
+			size -= 1.6
+		}
+
+		c.RenderTo(pdf)
+
+		pdf.NewPage(width, height)
+	}
+}
+
+func loopSizeAndWeightWithLorem(pdf *pdf.PDF, fonts font.Fonts) {
+	for _, font := range fonts {
+		c := canvas.New(width, height)
+		ctx := canvas.NewContext(c)
+
+		size := 30.0
+		for y, i := height, 30; y > 0 && i > 0; i-- {
+			face := font.Font.Face(size, canvas.Black)
+
+			txt := canvas.NewTextBox(face, lorem, width, 0.0, canvas.Left, canvas.Top, 0.0, 0.0)
+			ctx.DrawText(0, y, txt)
+
+			y -= txt.Bounds().H
+			size -= 1.6
+		}
+
+		c.RenderTo(pdf)
+
+		pdf.NewPage(width, height)
 	}
 }
