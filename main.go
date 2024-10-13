@@ -4,15 +4,15 @@ import (
 	"fmt"
 	"os"
 	"test/internal/font"
+	"test/internal/testers/alphabet"
+	"test/internal/testers/lorem"
 	"time"
 
-	"github.com/tdewolff/canvas"
 	"github.com/tdewolff/canvas/renderers/pdf"
 )
 
 const (
 	fontDir = "./font/OTF"
-	lorem   = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam in dui mauris. Vivamus hendrerit arcu sed`
 	outFile = "test.pdf"
 
 	// pdf size in points
@@ -37,8 +37,8 @@ func main() {
 		panic(err)
 	}
 
-	loopSizeAndWeightWithFontName(pdf, fonts)
-	loopSizeAndWeightWithLorem(pdf, fonts)
+	alphabet.Test(pdf, fonts)
+	lorem.Test(pdf, fonts)
 
 	if err := pdf.Close(); err != nil {
 		panic(err)
@@ -46,48 +46,4 @@ func main() {
 
 	end := time.Now()
 	fmt.Printf("Ran at %s in %fs\n", end.Format("15:04:05"), end.Sub(start).Seconds())
-}
-
-func loopSizeAndWeightWithFontName(pdf *pdf.PDF, fonts font.Fonts) {
-	for _, font := range fonts {
-		c := canvas.New(width, height)
-		ctx := canvas.NewContext(c)
-
-		size := 50.0
-		for y, i := height, 30; y > 0 && i > 0; i-- {
-			face := font.Font.Face(size, canvas.Black)
-
-			txt := canvas.NewTextBox(face, font.Name, width, 0.0, canvas.Left, canvas.Top, 0.0, 0.0)
-			ctx.DrawText(0, y, txt)
-
-			y -= txt.Bounds().H
-			size -= 1.6
-		}
-
-		c.RenderTo(pdf)
-
-		pdf.NewPage(width, height)
-	}
-}
-
-func loopSizeAndWeightWithLorem(pdf *pdf.PDF, fonts font.Fonts) {
-	for _, font := range fonts {
-		c := canvas.New(width, height)
-		ctx := canvas.NewContext(c)
-
-		size := 30.0
-		for y, i := height, 30; y > 0 && i > 0; i-- {
-			face := font.Font.Face(size, canvas.Black)
-
-			txt := canvas.NewTextBox(face, lorem, width, 0.0, canvas.Left, canvas.Top, 0.0, 0.0)
-			ctx.DrawText(0, y, txt)
-
-			y -= txt.Bounds().H
-			size -= 1.6
-		}
-
-		c.RenderTo(pdf)
-
-		pdf.NewPage(width, height)
-	}
 }
