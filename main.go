@@ -4,8 +4,7 @@ import (
 	"fmt"
 	"os"
 	"test/internal/font"
-	"test/internal/testers/alphabet"
-	"test/internal/testers/lorem"
+	"test/internal/testers/lettergrid"
 	"time"
 
 	"github.com/tdewolff/canvas/renderers/pdf"
@@ -37,8 +36,9 @@ func main() {
 		panic(err)
 	}
 
-	alphabet.Test(pdf, fonts)
-	lorem.Test(pdf, fonts)
+	// alphabet.Test(pdf, fonts)
+	// lorem.Test(pdf, fonts)
+	lettergrid.Test(pdf, fonts)
 
 	if err := pdf.Close(); err != nil {
 		panic(err)
