@@ -18,14 +18,13 @@ type Letter struct {
 }
 
 func Test(pdf *pdf.PDF, fonts font.Fonts) {
-	for _, l := range "abcdefghijklmnopqrstuvwxyz" {
+	for _, l := range "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz" {
 		letter(pdf, fonts, string(l))
 	}
+	letter(pdf, fonts, "test")
 }
 
 func letter(pdf *pdf.PDF, fonts font.Fonts, letter string) {
-	width, height := pdf.Size()
-
 	letters := make([]Letter, 0)
 
 	size := 100.0
@@ -56,20 +55,23 @@ func letter(pdf *pdf.PDF, fonts font.Fonts, letter string) {
 		}
 	}
 
+	width := biggestW * (float64(gridSize) + 0.5)
+	height := biggestH * (0.5 + float64(gridSize))
+	pdf.NewPage(width, height)
+
 	fmt.Printf("biggestW: %f, biggestH: %f\n", biggestW, biggestH)
 
 	c := canvas.New(width, height)
 	ctx := canvas.NewContext(c)
 
 	for _, l := range letters {
-		x := l.x*biggestW + (biggestW-l.w)/2.0
-		y := height - (l.y+1.0)*biggestH
+		x := biggestW*0.25 + l.x*biggestW + (biggestW-l.w)/2.0
+		y := -biggestH*0.125 + height - (l.y+1.0)*biggestH
 		fmt.Printf("x: %f, y: %f\n", x, y)
 		ctx.DrawText(x, y, l.text)
 	}
 
 	c.RenderTo(pdf)
-	pdf.NewPage(width, height)
 }
 
 func biggestGridSize(l int) int {
