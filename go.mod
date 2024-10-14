@@ -1,4 +1,4 @@
-module test
+module github.com/nobe4/seshat
 
 go 1.23.2
 

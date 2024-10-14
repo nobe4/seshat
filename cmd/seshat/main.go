@@ -3,10 +3,12 @@ package main
 import (
 	"fmt"
 	"os"
-	"test/internal/font"
-	"test/internal/testers/lettergrid"
 	"time"
 
+	"github.com/nobe4/seshat/internal/font"
+	"github.com/nobe4/seshat/internal/testers/alphabet"
+	"github.com/nobe4/seshat/internal/testers/lettergrid"
+	"github.com/nobe4/seshat/internal/testers/lorem"
 	"github.com/tdewolff/canvas/renderers/pdf"
 )
 
@@ -36,8 +38,8 @@ func main() {
 		panic(err)
 	}
 
-	// alphabet.Test(pdf, fonts)
-	// lorem.Test(pdf, fonts)
+	alphabet.Test(pdf, fonts)
+	lorem.Test(pdf, fonts)
 	lettergrid.Test(pdf, fonts)
 
 	if err := pdf.Close(); err != nil {

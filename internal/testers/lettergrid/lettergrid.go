@@ -3,8 +3,8 @@ package lettergrid
 import (
 	"fmt"
 	"math"
-	"test/internal/font"
 
+	"github.com/nobe4/seshat/internal/font"
 	"github.com/tdewolff/canvas"
 	"github.com/tdewolff/canvas/renderers/pdf"
 )
