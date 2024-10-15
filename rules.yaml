@@ -1,0 +1,4 @@
+- type: alphabet
+- type: text
+  args:
+    - "Hello, world!"

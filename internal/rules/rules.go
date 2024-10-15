@@ -10,20 +10,20 @@ import (
 )
 
 type Rule struct {
-	Test string   `yaml:"test"`
+	Type string   `yaml:"type"`
 	Args []string `yaml:"args"`
 }
 
 var DefaultRules = []Rule{
 	{
-		Test: "text",
+		Type: "text",
 		Args: []string{
 			"The quick brown fox jumps over the lazy dog",
 			"Sphinx of black quartz, judge my vow",
 		},
 	},
 	{
-		Test: "grid",
+		Type: "grid",
 		Args: []string{
 			"a",
 			"b",
@@ -31,8 +31,8 @@ var DefaultRules = []Rule{
 			"test",
 		},
 	},
-	{Test: "alphabet"},
-	{Test: "lorem"},
+	{Type: "alphabet"},
+	{Type: "lorem"},
 }
 
 func Render(rules []Rule, pdf *pdf.PDF, fonts font.Fonts) {

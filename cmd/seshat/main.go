@@ -9,6 +9,7 @@ import (
 	"github.com/nobe4/seshat/internal/rules"
 	"github.com/nobe4/seshat/internal/testers"
 	"github.com/tdewolff/canvas/renderers/pdf"
+	"gopkg.in/yaml.v3"
 )
 
 const (
@@ -37,11 +38,12 @@ func main() {
 		panic(err)
 	}
 
-	r := rules.DefaultRules
+	r := getRules()
+
 	rules.Render(r, pdf, fonts)
 	for _, rule := range r {
-		fmt.Printf("Running rule %s(%v)\n", rule.Test, rule.Args)
-		testers.Get(rule.Test)(pdf, fonts, rule.Args)
+		fmt.Printf("Running rule %s(%v)\n", rule.Type, rule.Args)
+		testers.Get(rule.Type)(pdf, fonts, rule.Args)
 	}
 
 	if err := pdf.Close(); err != nil {
@@ -50,4 +52,20 @@ func main() {
 
 	end := time.Now()
 	fmt.Printf("Ran at %s in %fs\n", end.Format("15:04:05"), end.Sub(start).Seconds())
+}
+
+func getRules() []rules.Rule {
+	c, err := os.ReadFile("rules.yaml")
+	if err != nil {
+		fmt.Println("Error reading rules.yaml:", err)
+		return rules.DefaultRules
+	}
+
+	var r []rules.Rule
+	if err := yaml.Unmarshal(c, &r); err != nil {
+		fmt.Println("Error unmarshalling rules.yaml:", err)
+		return rules.DefaultRules
+	}
+
+	return r
 }
