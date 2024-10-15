@@ -2,8 +2,10 @@
 
 # Install
 
-- Download a version from the [releases
-page](https://github.com/nobe4/seshat/releases/latest).
+- Download a version from the [releases page](https://github.com/nobe4/seshat/releases/latest).
+
+    To find your OS and architecture see [this](https://superuser.com/a/173795).
+
 - Rename to `seshat` and put it in your `$PATH`.
 
 
