@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=https://goreleaser.com/static/schema.json
+# vim: set ts=2 sw=2 tw=0 fo=cnqoj
+# Local testing: goreleaser --snapshot --clean
+
+version: 2
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - main: ./cmd/seshat
+    env:
+      - CGO_ENABLED=0
+
+archives:
+  - name_template: "{{ .Os }}-{{ .Arch }}"
+    format: binary
+
+snapshot:
+  name_template: "{{ .Tag }}-next"
+
+changelog:
+  use: github-native
+
+release:
+  draft: false
