@@ -10,7 +10,7 @@ const (
 	lorem = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam in dui mauris. Vivamus hendrerit arcu sed`
 )
 
-func Test(pdf *pdf.PDF, fonts font.Fonts) {
+func Test(pdf *pdf.PDF, fonts font.Fonts, _ []string) {
 	width, height := pdf.Size()
 
 	for _, font := range fonts {

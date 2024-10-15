@@ -2,7 +2,10 @@ module github.com/nobe4/seshat
 
 go 1.23.2
 
-require github.com/tdewolff/canvas v0.0.0-20241004114307-d601972c0f7c
+require (
+	github.com/tdewolff/canvas v0.0.0-20241004114307-d601972c0f7c
+	gopkg.in/yaml.v3 v3.0.1
+)
 
 require (
 	github.com/ByteArena/poly2tri-go v0.0.0-20170716161910-d102ad91854f // indirect

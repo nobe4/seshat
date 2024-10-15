@@ -6,9 +6,8 @@ import (
 	"time"
 
 	"github.com/nobe4/seshat/internal/font"
-	"github.com/nobe4/seshat/internal/testers/alphabet"
-	"github.com/nobe4/seshat/internal/testers/lettergrid"
-	"github.com/nobe4/seshat/internal/testers/lorem"
+	"github.com/nobe4/seshat/internal/rules"
+	"github.com/nobe4/seshat/internal/testers"
 	"github.com/tdewolff/canvas/renderers/pdf"
 )
 
@@ -38,9 +37,12 @@ func main() {
 		panic(err)
 	}
 
-	alphabet.Test(pdf, fonts)
-	lorem.Test(pdf, fonts)
-	lettergrid.Test(pdf, fonts)
+	r := rules.DefaultRules
+	rules.Render(r, pdf, fonts)
+	for _, rule := range r {
+		fmt.Printf("Running rule %s(%v)\n", rule.Test, rule.Args)
+		testers.Get(rule.Test)(pdf, fonts, rule.Args)
+	}
 
 	if err := pdf.Close(); err != nil {
 		panic(err)

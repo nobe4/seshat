@@ -1,8 +1,8 @@
-package lettergrid
+package grid
 
 import (
-	"fmt"
 	"math"
+	"strings"
 
 	"github.com/nobe4/seshat/internal/font"
 	"github.com/tdewolff/canvas"
@@ -17,11 +17,14 @@ type Letter struct {
 	y    float64
 }
 
-func Test(pdf *pdf.PDF, fonts font.Fonts) {
-	for _, l := range "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz" {
+func Test(pdf *pdf.PDF, fonts font.Fonts, letters []string) {
+	if len(letters) == 0 {
+		letters = strings.Split("ABCDEFGHIJKLMNOPQRSTUVWXYZ", "")
+	}
+
+	for _, l := range letters {
 		letter(pdf, fonts, string(l))
 	}
-	letter(pdf, fonts, "test")
 }
 
 func letter(pdf *pdf.PDF, fonts font.Fonts, letter string) {
@@ -34,7 +37,6 @@ func letter(pdf *pdf.PDF, fonts font.Fonts, letter string) {
 		face := font.Font.Face(size, canvas.Black)
 		txt := canvas.NewTextLine(face, letter, canvas.Left)
 
-		fmt.Printf("x %f, y %f\n", float64(i%gridSize), float64(i/gridSize))
 		letters = append(letters, Letter{
 			text: txt,
 			w:    txt.Width,
@@ -59,15 +61,12 @@ func letter(pdf *pdf.PDF, fonts font.Fonts, letter string) {
 	height := biggestH * (0.5 + float64(gridSize))
 	pdf.NewPage(width, height)
 
-	fmt.Printf("biggestW: %f, biggestH: %f\n", biggestW, biggestH)
-
 	c := canvas.New(width, height)
 	ctx := canvas.NewContext(c)
 
 	for _, l := range letters {
 		x := biggestW*0.25 + l.x*biggestW + (biggestW-l.w)/2.0
 		y := -biggestH*0.125 + height - (l.y+1.0)*biggestH
-		fmt.Printf("x: %f, y: %f\n", x, y)
 		ctx.DrawText(x, y, l.text)
 	}
 
