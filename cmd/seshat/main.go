@@ -6,16 +6,14 @@ import (
 	"os"
 	"time"
 
+	"github.com/nobe4/seshat/internal/config"
 	"github.com/nobe4/seshat/internal/font"
-	"github.com/nobe4/seshat/internal/rules"
 	"github.com/nobe4/seshat/internal/testers"
 	"github.com/tdewolff/canvas/renderers/pdf"
 	"gopkg.in/yaml.v3"
 )
 
 const (
-	fontDir = "./font/OTF"
-
 	// pdf size in points
 	width  = 210.0
 	height = 297.0
@@ -32,7 +30,7 @@ func main() {
 	run(config, *outputPtr, *fontPtr)
 }
 
-func run(r []rules.Rule, outFile, fontDir string) {
+func run(c config.Config, outFile, fontDir string) {
 	start := time.Now()
 	fmt.Printf("Start at %s\n", start.Format("15:04:05"))
 
@@ -49,8 +47,8 @@ func run(r []rules.Rule, outFile, fontDir string) {
 		panic(err)
 	}
 
-	rules.Render(r, pdf, fonts)
-	for _, rule := range r {
+	config.Render(c, pdf, fonts)
+	for _, rule := range c.Rules {
 		fmt.Printf("Running rule %s(%v)\n", rule.Type, rule.Args)
 		testers.Get(rule.Type)(pdf, fonts, rule.Args)
 	}
@@ -63,18 +61,18 @@ func run(r []rules.Rule, outFile, fontDir string) {
 	fmt.Printf("Ran at %s in %fs\n", end.Format("15:04:05"), end.Sub(start).Seconds())
 }
 
-func getConfig(p string) []rules.Rule {
-	c, err := os.ReadFile(p)
+func getConfig(p string) config.Config {
+	content, err := os.ReadFile(p)
 	if err != nil {
 		fmt.Printf("Error reading %s: %w\n", p, err)
-		return rules.DefaultRules
+		return config.DefaultConfig
 	}
 
-	var r []rules.Rule
-	if err := yaml.Unmarshal(c, &r); err != nil {
+	var c config.Config
+	if err := yaml.Unmarshal(content, &c); err != nil {
 		fmt.Printf("Error unmarshalling %s: %w\n", p, err)
-		return rules.DefaultRules
+		return config.DefaultConfig
 	}
 
-	return r
+	return c
 }
