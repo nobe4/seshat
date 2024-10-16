@@ -1,4 +1,8 @@
 - type: alphabet
+- type: grid
+  args:
+    - 5
+    - 5
 - type: text
   args:
     - "Hello, world!"

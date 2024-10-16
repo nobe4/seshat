@@ -1,6 +1,7 @@
 package font
 
 import (
+	"fmt"
 	"os"
 	"path"
 	"sort"
@@ -46,7 +47,8 @@ func LoadFromDir(dir string) (Fonts, error) {
 
 		font, err := canvas.LoadFontFile(fPath, canvas.FontRegular)
 		if err != nil {
-			return nil, err
+			fmt.Printf("error loading font %s: %v\n", fPath, err)
+			continue
 		}
 
 		nameWithoutExt := strings.TrimSuffix(f.Name(), path.Ext(f.Name()))

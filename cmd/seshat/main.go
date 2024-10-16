@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
 	"time"
@@ -14,7 +15,6 @@ import (
 
 const (
 	fontDir = "./font/OTF"
-	outFile = "test.pdf"
 
 	// pdf size in points
 	width  = 210.0
@@ -22,6 +22,17 @@ const (
 )
 
 func main() {
+	configPtr := flag.String("config", "config.yaml", "path to the configuration file")
+	fontPtr := flag.String("font", ".", "path to the font file or directory")
+	outputPtr := flag.String("output", "output.pdf", "path to the output file")
+	flag.Parse()
+
+	config := getConfig(*configPtr)
+
+	run(config, *outputPtr, *fontPtr)
+}
+
+func run(r []rules.Rule, outFile, fontDir string) {
 	start := time.Now()
 	fmt.Printf("Start at %s\n", start.Format("15:04:05"))
 
@@ -38,8 +49,6 @@ func main() {
 		panic(err)
 	}
 
-	r := getRules()
-
 	rules.Render(r, pdf, fonts)
 	for _, rule := range r {
 		fmt.Printf("Running rule %s(%v)\n", rule.Type, rule.Args)
@@ -54,16 +63,16 @@ func main() {
 	fmt.Printf("Ran at %s in %fs\n", end.Format("15:04:05"), end.Sub(start).Seconds())
 }
 
-func getRules() []rules.Rule {
-	c, err := os.ReadFile("rules.yaml")
+func getConfig(p string) []rules.Rule {
+	c, err := os.ReadFile(p)
 	if err != nil {
-		fmt.Println("Error reading rules.yaml:", err)
+		fmt.Printf("Error reading %s: %w\n", p, err)
 		return rules.DefaultRules
 	}
 
 	var r []rules.Rule
 	if err := yaml.Unmarshal(c, &r); err != nil {
-		fmt.Println("Error unmarshalling rules.yaml:", err)
+		fmt.Printf("Error unmarshalling %s: %w\n", p, err)
 		return rules.DefaultRules
 	}
 
