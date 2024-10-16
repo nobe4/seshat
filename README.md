@@ -6,15 +6,13 @@
 
     To find your OS and architecture see [this](https://superuser.com/a/173795).
 
-- Rename to `seshat` and put it in your `$PATH`.
-
+- (optional) Rename to `seshat` and put it in your `$PATH`.
 
 - :warning: If you are on macOS, you might need to run
 
     ```sh
-    xattr -d com.apple.quarantine ./seshat
+    xattr -d com.apple.quarantine ./path/to/file
     ```
-
 
 # Usage
 

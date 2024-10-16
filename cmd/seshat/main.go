@@ -37,7 +37,9 @@ func run(c config.Config) {
 	}
 	defer f.Close()
 
-	pdf := pdf.New(f, width, height, &pdf.Options{})
+	pdf := pdf.New(f, width, height, &pdf.Options{
+		SubsetFonts: true,
+	})
 
 	fonts, err := font.LoadFromDir(c.Font)
 	if err != nil {
