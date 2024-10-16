@@ -18,9 +18,9 @@
 
 # Usage
 
-- Write a `rules.yaml` file
+- Write a `config.yaml` file
 
-  See [rules.yaml](./examples/rules.yaml) for an example.
+  See [config.yaml](./examples/config.yaml) for an example.
 
-- Run `seshat` in the same directory as the `rules.yaml` file.
-- See `stdout` for the output and `test.pdf` for the generated PDF.
+- Run `seshat` in the same directory as the `config.yaml` file.
+- See `stdout` for the output and `output.pdf` for the generated PDF.
