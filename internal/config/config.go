@@ -21,10 +21,12 @@ type Config struct {
 }
 
 type Rule struct {
-	Type string   `yaml:"type"`
-	Args []string `yaml:"args"`
+	Type     string   `yaml:"type"`
+	Features string   `yaml:"features"`
+	Args     []string `yaml:"args"`
 }
 
+// TODO: default config should come from ./example/config.yaml
 var DefaultConfig = Config{
 	Font:   ".",
 	Output: "output.pdf",

@@ -1,12 +1,18 @@
-font: ./font/OTF
+font: ./font/Fira
 output: ./output.pdf
 
 rules:
+  - type: text
+    args:
+      - "testing 3.14 ff ll ii 0O"
   - type: alphabet
   - type: grid
     args:
-      - 5
-      - 5
+      - 01a
+  - type: grid
+    features: "zero, smcp"
+    args:
+      - 01a
   - type: text
     args:
       - "Hello, world!"

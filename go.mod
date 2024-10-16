@@ -3,7 +3,7 @@ module github.com/nobe4/seshat
 go 1.23.2
 
 require (
-	github.com/tdewolff/canvas v0.0.0-20241004114307-d601972c0f7c
+	github.com/tdewolff/canvas v0.0.0-20241016131410-e8e42bbd1fc2
 	gopkg.in/yaml.v3 v3.0.1
 )
 

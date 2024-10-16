@@ -52,7 +52,7 @@ func run(c config.Config) error {
 	config.Render(c, pdf, fonts)
 	for _, rule := range c.Rules {
 		fmt.Printf("Running rule %s(%v)\n", rule.Type, rule.Args)
-		testers.Get(rule.Type)(pdf, fonts, rule.Args)
+		testers.Get(rule.Type)(pdf, fonts, rule.Features, rule.Args)
 	}
 
 	if err := pdf.Close(); err != nil {
