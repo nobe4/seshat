@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"path/filepath"
 
 	"github.com/nobe4/seshat/internal/font"
 	"github.com/tdewolff/canvas"
@@ -12,6 +13,7 @@ import (
 )
 
 type Config struct {
+	Path   string `yaml:"path"`
 	Font   string `yaml:"font"`
 	Output string `yaml:"output"`
 
@@ -49,22 +51,42 @@ var DefaultConfig = Config{
 }
 
 func Read(p string) Config {
-	content, err := os.ReadFile(p)
-	if err != nil {
-		fmt.Printf("Error reading %s: %w\n", p, err)
-		return DefaultConfig
-	}
-
 	c := DefaultConfig
+
+	cwdPath := filepath.Join(cwd(), p)
+	c.Path = cwdPath
+	content, err := os.ReadFile(cwdPath)
+	if err != nil {
+		fmt.Printf("Error reading %s: %v\n", cwdPath, err)
+
+		content, err = os.ReadFile(p)
+		if err != nil {
+			fmt.Printf("Error reading %s: %v\n", p, err)
+			return c
+		}
+		c.Path = p
+	}
+
 	if err := yaml.Unmarshal(content, &c); err != nil {
-		fmt.Printf("Error unmarshalling %s: %w\n", p, err)
+		fmt.Printf("Error unmarshalling %s: %v\n", p, err)
 		return DefaultConfig
 	}
 
-	c.Output = path.Join(path.Dir(p), c.Output)
-	c.Font = path.Join(path.Dir(p), c.Font)
+	c.Output = path.Join(path.Dir(c.Path), c.Output)
+	c.Font = path.Join(path.Dir(c.Path), c.Font)
 
 	return c
+}
+
+func cwd() string {
+	cwd, err := os.Executable()
+
+	if err != nil {
+		fmt.Printf("Error getting current working directory: %v\n", err)
+		return "."
+	}
+
+	return filepath.Dir(cwd)
 }
 
 func Render(c Config, pdf *pdf.PDF, fonts font.Fonts) {
