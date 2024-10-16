@@ -72,8 +72,8 @@ func Read(p string) Config {
 		return DefaultConfig
 	}
 
-	c.Output = path.Join(path.Dir(p), c.Output)
-	c.Font = path.Join(path.Dir(p), c.Font)
+	c.Output = path.Join(path.Dir(c.Path), c.Output)
+	c.Font = path.Join(path.Dir(c.Path), c.Font)
 
 	return c
 }
