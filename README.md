@@ -6,7 +6,7 @@
 
     To find your OS and architecture see [this](https://superuser.com/a/173795).
 
-- (optional) Rename to `seshat` and put it in your `$PATH`.
+- (optional) Rename to `seshat`.
 
 - Run
 
@@ -14,7 +14,7 @@
     chmod +x ./path/to/file
     ```
 
-- :warning: If you are on macOS, you might need to run
+- :warning: If you are on macOS, you might need to run:
 
     ```sh
     xattr -d com.apple.quarantine ./path/to/file
@@ -26,5 +26,8 @@
 
   See [config.yaml](./examples/config.yaml) for an example.
 
-- Run `seshat` in the same directory as the `config.yaml` file.
+- Put `seshat` in the same directory as the `config.yaml` file.
+
+- Run `seshat` in the terminal.
+
 - See `stdout` for the output and `output.pdf` for the generated PDF.
