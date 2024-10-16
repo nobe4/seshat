@@ -20,7 +20,7 @@
 
 - Write a `rules.yaml` file
 
-  See [rules.yaml](./rules.yaml) for an example.
+  See [rules.yaml](./examples/rules.yaml) for an example.
 
 - Run `seshat` in the same directory as the `rules.yaml` file.
 - See `stdout` for the output and `test.pdf` for the generated PDF.
