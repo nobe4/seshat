@@ -30,8 +30,8 @@ github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 h1:DACJavvAHhabrF0
 github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0/go.mod h1:E/TSTwGwJL78qG/PmXZO1EjYhfJinVAhrmmHX6Z8B9k=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
-github.com/tdewolff/canvas v0.0.0-20241004114307-d601972c0f7c h1:t46xGyVm4G/XMPYRWeAY2jyC7amv2qHzP0rFJQRUQ6E=
-github.com/tdewolff/canvas v0.0.0-20241004114307-d601972c0f7c/go.mod h1:1bMKQWV4mWh4GtLPMBzMaY2Z8E8zqolCi4ceTxStVFE=
+github.com/tdewolff/canvas v0.0.0-20241016131410-e8e42bbd1fc2 h1:R59L76gYJW3UxGJDPuH8Bk08lzg6inwjcM6gHShmrxo=
+github.com/tdewolff/canvas v0.0.0-20241016131410-e8e42bbd1fc2/go.mod h1:1bMKQWV4mWh4GtLPMBzMaY2Z8E8zqolCi4ceTxStVFE=
 github.com/tdewolff/font v0.0.0-20240728193914-9dc6e3441d03 h1:8gZpGeUF+0bYYNDJCWXG64YH4WdSFZDFoWp1RKil1Qg=
 github.com/tdewolff/font v0.0.0-20240728193914-9dc6e3441d03/go.mod h1:wiFLtNiPVz+WWkn1CekBWgSEEV5PTR7qae3wKbU0xd0=
 github.com/tdewolff/minify/v2 v2.20.5 h1:IbJpmpAFESnuJPdsvFBJWsDcXE5qHsmaVQrRqhOI9sI=

@@ -21,13 +21,15 @@ type Fonts []Font
 
 var (
 	fontOrder = map[string]int{
-		"thin":    0,
-		"light":   1,
-		"regular": 2,
-		"medium":  3,
-		"bold":    4,
-		"black":   5,
-		"heavy":   6,
+		"thin":       0,
+		"extralight": 1,
+		"light":      2,
+		"regular":    3,
+		"medium":     4,
+		"extrabold":  5,
+		"bold":       6,
+		"black":      7,
+		"heavy":      8,
 	}
 )
 

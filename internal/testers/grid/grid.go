@@ -17,17 +17,17 @@ type Letter struct {
 	y    float64
 }
 
-func Test(pdf *pdf.PDF, fonts font.Fonts, letters []string) {
+func Test(pdf *pdf.PDF, fonts font.Fonts, features string, letters []string) {
 	if len(letters) == 0 {
 		letters = strings.Split("ABCDEFGHIJKLMNOPQRSTUVWXYZ", "")
 	}
 
 	for _, l := range letters {
-		letter(pdf, fonts, string(l))
+		letter(pdf, fonts, features, string(l))
 	}
 }
 
-func letter(pdf *pdf.PDF, fonts font.Fonts, letter string) {
+func letter(pdf *pdf.PDF, fonts font.Fonts, features, letter string) {
 	letters := make([]Letter, 0)
 
 	size := 100.0
@@ -35,6 +35,8 @@ func letter(pdf *pdf.PDF, fonts font.Fonts, letter string) {
 
 	for i, font := range fonts {
 		face := font.Font.Face(size, canvas.Black)
+		face.Font.SetFeatures(features)
+
 		txt := canvas.NewTextLine(face, letter, canvas.Left)
 
 		letters = append(letters, Letter{
