@@ -1,3 +1,6 @@
+font: ./font/OTF
+output: ./output.pdf
+
 rules:
   - type: alphabet
   - type: grid

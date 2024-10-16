@@ -2,6 +2,8 @@ package config
 
 import (
 	"fmt"
+	"os"
+	"path"
 
 	"github.com/nobe4/seshat/internal/font"
 	"github.com/tdewolff/canvas"
@@ -10,6 +12,9 @@ import (
 )
 
 type Config struct {
+	Font   string `yaml:"font"`
+	Output string `yaml:"output"`
+
 	Rules []Rule `yaml:"rules"`
 }
 
@@ -19,6 +24,8 @@ type Rule struct {
 }
 
 var DefaultConfig = Config{
+	Font:   ".",
+	Output: "output.pdf",
 	Rules: []Rule{
 		{
 			Type: "text",
@@ -39,6 +46,25 @@ var DefaultConfig = Config{
 		{Type: "alphabet"},
 		{Type: "lorem"},
 	},
+}
+
+func Read(p string) Config {
+	content, err := os.ReadFile(p)
+	if err != nil {
+		fmt.Printf("Error reading %s: %w\n", p, err)
+		return DefaultConfig
+	}
+
+	c := DefaultConfig
+	if err := yaml.Unmarshal(content, &c); err != nil {
+		fmt.Printf("Error unmarshalling %s: %w\n", p, err)
+		return DefaultConfig
+	}
+
+	c.Output = path.Join(path.Dir(p), c.Output)
+	c.Font = path.Join(path.Dir(p), c.Font)
+
+	return c
 }
 
 func Render(c Config, pdf *pdf.PDF, fonts font.Fonts) {

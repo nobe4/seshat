@@ -10,7 +10,6 @@ import (
 	"github.com/nobe4/seshat/internal/font"
 	"github.com/nobe4/seshat/internal/testers"
 	"github.com/tdewolff/canvas/renderers/pdf"
-	"gopkg.in/yaml.v3"
 )
 
 const (
@@ -21,20 +20,18 @@ const (
 
 func main() {
 	configPtr := flag.String("config", "config.yaml", "path to the configuration file")
-	fontPtr := flag.String("font", ".", "path to the font file or directory")
-	outputPtr := flag.String("output", "output.pdf", "path to the output file")
 	flag.Parse()
 
-	config := getConfig(*configPtr)
+	config := config.Read(*configPtr)
 
-	run(config, *outputPtr, *fontPtr)
+	run(config)
 }
 
-func run(c config.Config, outFile, fontDir string) {
+func run(c config.Config) {
 	start := time.Now()
 	fmt.Printf("Start at %s\n", start.Format("15:04:05"))
 
-	f, err := os.Create(outFile)
+	f, err := os.Create(c.Output)
 	if err != nil {
 		panic(err)
 	}
@@ -42,7 +39,7 @@ func run(c config.Config, outFile, fontDir string) {
 
 	pdf := pdf.New(f, width, height, &pdf.Options{})
 
-	fonts, err := font.LoadFromDir(fontDir)
+	fonts, err := font.LoadFromDir(c.Font)
 	if err != nil {
 		panic(err)
 	}
@@ -59,20 +56,4 @@ func run(c config.Config, outFile, fontDir string) {
 
 	end := time.Now()
 	fmt.Printf("Ran at %s in %fs\n", end.Format("15:04:05"), end.Sub(start).Seconds())
-}
-
-func getConfig(p string) config.Config {
-	content, err := os.ReadFile(p)
-	if err != nil {
-		fmt.Printf("Error reading %s: %w\n", p, err)
-		return config.DefaultConfig
-	}
-
-	var c config.Config
-	if err := yaml.Unmarshal(content, &c); err != nil {
-		fmt.Printf("Error unmarshalling %s: %w\n", p, err)
-		return config.DefaultConfig
-	}
-
-	return c
 }
