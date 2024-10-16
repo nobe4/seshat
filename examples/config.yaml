@@ -1,4 +1,4 @@
-font: ./font/Fira
+font: ./font/Fira-Sans
 output: ./output.pdf
 
 rules:
