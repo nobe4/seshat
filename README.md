@@ -8,6 +8,12 @@
 
 - (optional) Rename to `seshat` and put it in your `$PATH`.
 
+- Run
+
+    ```sh
+    chmod +x ./path/to/file
+    ```
+
 - :warning: If you are on macOS, you might need to run
 
     ```sh
