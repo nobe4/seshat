@@ -4,7 +4,6 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"path/filepath"
 	"time"
 
 	"github.com/nobe4/seshat/internal/config"
@@ -23,24 +22,12 @@ func main() {
 	configPtr := flag.String("config", "config.yaml", "path to the configuration file")
 	flag.Parse()
 
-	configPath := filepath.Join(cwd(), *configPtr)
-	config := config.Read(configPath)
+	config := config.Read(*configPtr)
 
 	if err := run(config); err != nil {
 		fmt.Printf("error: %v\n", err)
 		os.Exit(1)
 	}
-}
-
-func cwd() string {
-	cwd, err := os.Executable()
-
-	if err != nil {
-		fmt.Printf("Error getting current working directory: %v\n", err)
-		return "."
-	}
-
-	return filepath.Dir(cwd)
 }
 
 func run(c config.Config) error {
