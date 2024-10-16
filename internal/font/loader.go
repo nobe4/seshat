@@ -70,6 +70,10 @@ func LoadFromDir(dir string) (Fonts, error) {
 		})
 	}
 
+	if len(fonts) == 0 {
+		return nil, fmt.Errorf("no fonts found in %s", dir)
+	}
+
 	fonts.Sort()
 
 	return fonts, nil

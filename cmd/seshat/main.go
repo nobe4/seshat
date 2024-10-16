@@ -24,16 +24,19 @@ func main() {
 
 	config := config.Read(*configPtr)
 
-	run(config)
+	if err := run(config); err != nil {
+		fmt.Printf("error: %v\n", err)
+		os.Exit(1)
+	}
 }
 
-func run(c config.Config) {
+func run(c config.Config) error {
 	start := time.Now()
 	fmt.Printf("Start at %s\n", start.Format("15:04:05"))
 
 	f, err := os.Create(c.Output)
 	if err != nil {
-		panic(err)
+		return fmt.Errorf("error creating output file: %w", err)
 	}
 	defer f.Close()
 
@@ -43,7 +46,7 @@ func run(c config.Config) {
 
 	fonts, err := font.LoadFromDir(c.Font)
 	if err != nil {
-		panic(err)
+		return fmt.Errorf("error loading fonts: %w", err)
 	}
 
 	config.Render(c, pdf, fonts)
@@ -53,9 +56,11 @@ func run(c config.Config) {
 	}
 
 	if err := pdf.Close(); err != nil {
-		panic(err)
+		return fmt.Errorf("error closing pdf: %w", err)
 	}
 
 	end := time.Now()
 	fmt.Printf("Ran at %s in %fs\n", end.Format("15:04:05"), end.Sub(start).Seconds())
+
+	return nil
 }
