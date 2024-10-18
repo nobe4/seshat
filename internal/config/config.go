@@ -24,7 +24,9 @@ type Config struct {
 	Font   string `yaml:"font"`
 	Output string `yaml:"output"`
 
-	Rules []Rule `yaml:"rules"`
+	Width  float64 `yaml:"width"`
+	Height float64 `yaml:"height"`
+	Rules  []Rule  `yaml:"rules"`
 }
 
 type Rule struct {

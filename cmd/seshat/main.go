@@ -14,12 +14,6 @@ import (
 	"github.com/tdewolff/canvas/renderers/pdf"
 )
 
-const (
-	// pdf size in points
-	width  = 210.0
-	height = 297.0
-)
-
 func main() {
 	configPtr := flag.String("config", "config.yaml", "path to the configuration file")
 	flag.Parse()
@@ -115,7 +109,7 @@ func render(c config.Config) error {
 	}
 	defer f.Close()
 
-	pdf := pdf.New(f, width, height, &pdf.Options{
+	pdf := pdf.New(f, c.Width, c.Height, &pdf.Options{
 		SubsetFonts: true,
 	})
 
