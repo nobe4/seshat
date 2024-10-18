@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"os"
@@ -23,72 +24,88 @@ func main() {
 	configPtr := flag.String("config", "config.yaml", "path to the configuration file")
 	flag.Parse()
 
-	config, err := config.Read(*configPtr)
-	if err != nil {
-		fmt.Printf("error: %v\n", err)
-		os.Exit(1)
-	}
+	run(*configPtr)
+}
 
-	if err := watch(config); err != nil {
-		fmt.Printf("error watching for changes %v\n", err)
+func run(configPath string) {
+	for {
+		fmt.Printf("\n\nRunning with config %s\n", configPath)
+
+		c, err := config.Read(configPath)
+		if err != nil {
+			fmt.Printf("error reading the config: %v\n", err)
+		} else {
+			fmt.Println(c)
+			configPath = c.Path
+		}
+
+		if err := render(c); err != nil {
+			fmt.Printf("error rendering: %v\n", err)
+		}
+
+		if err := waitForModification(c); err != nil {
+			fmt.Printf("error watching for changes: %v\n", err)
+		}
 	}
 }
 
-func watch(config config.Config) error {
+func waitForModification(c config.Config) error {
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
 		return err
 	}
 	defer watcher.Close()
 
+	modifiedChan := make(chan struct{})
+	errorChan := make(chan error)
+
+	// TODO: handle signal more gracefully
 	go func() {
 		for {
 			select {
 			case event, ok := <-watcher.Events:
 				if !ok {
-					return
+					errorChan <- errors.New("watcher closed")
 				}
 
 				if event.Has(fsnotify.Write) {
-					fmt.Printf("\n-----\nModified file detected at %s: %s\nRe building...\n\n",
+					fmt.Printf("Modified file detected at %s: %s\n",
 						time.Now().Format("15:04:05"),
 						event.Name)
-					if err := run(config); err != nil {
-						fmt.Printf("error: %v\n", err)
-					}
+
+					modifiedChan <- struct{}{}
 				}
 			case err, ok := <-watcher.Errors:
 				if !ok {
-					return
+					errorChan <- errors.New("watcher closed")
 				}
 
-				fmt.Println("error:", err)
+				errorChan <- err
 			}
 		}
 	}()
 
-	fmt.Printf("Watching files in %s\n", config.Dir)
-	if err = watcher.Add(config.Dir); err != nil {
+	fmt.Printf("Watching files in %s\n", c.Dir)
+	if err = watcher.Add(c.Dir); err != nil {
+		fmt.Printf("error watching files in %s: %v\n", c.Dir, err)
+	}
+
+	fmt.Printf("Watching files in %s\n", c.Font)
+	if err = watcher.Add(c.Font); err != nil {
+		fmt.Printf("error watching files in %s: %v\n", c.Font, err)
+	}
+
+	fmt.Println("Waiting for modification, press Ctrl+C to exit")
+
+	select {
+	case err := <-errorChan:
 		return err
+	case <-modifiedChan:
+		return nil
 	}
-
-	fmt.Printf("Watching files in %s\n", config.Font)
-	if err = watcher.Add(config.Font); err != nil {
-		return err
-	}
-
-	watcher.Events <- fsnotify.Event{
-		Name: config.Path,
-		Op:   fsnotify.Write,
-	}
-
-	// TODO: handle shutdown more gracefully
-	<-make(chan struct{})
-
-	return nil
 }
 
-func run(c config.Config) error {
+func render(c config.Config) error {
 	start := time.Now()
 	fmt.Printf("Start at %s\n", start.Format("15:04:05"))
 
@@ -107,10 +124,12 @@ func run(c config.Config) error {
 		return fmt.Errorf("error loading fonts: %w", err)
 	}
 
-	config.Render(c, pdf, fonts)
 	for _, rule := range c.Rules {
 		fmt.Printf("Running rule %s(%v)\n", rule.Type, rule.Args)
-		testers.Get(rule.Type)(pdf, fonts, rule.Features, rule.Args)
+		t := testers.Get(rule.Type)
+		if t != nil {
+			t(pdf, fonts, rule.Features, rule.Args)
+		}
 	}
 
 	if err := pdf.Close(); err != nil {
