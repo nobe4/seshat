@@ -4,6 +4,12 @@ font: examples/fonts/Fira-Sans
 # `output` is the path to the output PDF.
 output: examples/output.pdf
 
+# `width` is the width of the output PDF in mm.
+width: 210
+
+# `height` is the height of the output PDF in mm.
+height: 297
+
 rules:
   # `text` writes the given text in each available font.
   - type: text
