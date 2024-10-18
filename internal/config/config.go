@@ -19,14 +19,17 @@ See https://github.com/nobe4/seshat/blob/main/config.yaml for an example config 
 `
 
 type Config struct {
-	Dir    string `yaml:"dir"`
-	Path   string `yaml:"path"`
+	Dir  string `yaml:"dir"`
+	Path string `yaml:"path"`
+
 	Font   string `yaml:"font"`
 	Output string `yaml:"output"`
 
 	Width  float64 `yaml:"width"`
 	Height float64 `yaml:"height"`
-	Rules  []Rule  `yaml:"rules"`
+	Size   float64 `yaml:"size"`
+
+	Rules []Rule `yaml:"rules"`
 }
 
 type Rule struct {

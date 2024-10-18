@@ -15,6 +15,7 @@ type Font struct {
 	Path  string
 	Font  *canvas.Font
 	Order int
+	Size  float64
 }
 
 type Fonts []Font
@@ -33,7 +34,7 @@ var (
 	}
 )
 
-func LoadFromDir(dir string) (Fonts, error) {
+func Load(dir string, size float64) (Fonts, error) {
 	files, err := os.ReadDir(dir)
 	if err != nil {
 		return nil, err
@@ -69,6 +70,7 @@ func LoadFromDir(dir string) (Fonts, error) {
 			Path:  fPath,
 			Font:  font,
 			Order: order,
+			Size:  size,
 		})
 	}
 
