@@ -6,9 +6,6 @@ import (
 	"path"
 	"path/filepath"
 
-	"github.com/nobe4/seshat/internal/font"
-	"github.com/tdewolff/canvas"
-	"github.com/tdewolff/canvas/renderers/pdf"
 	"gopkg.in/yaml.v3"
 )
 
@@ -115,22 +112,11 @@ func execDir() string {
 	return filepath.Dir(cwd)
 }
 
-func Render(c Config, pdf *pdf.PDF, fonts font.Fonts) {
+func (c Config) String() string {
 	out, err := yaml.Marshal(c)
 	if err != nil {
 		panic(err)
 	}
 
-	fmt.Println(string(out))
-	face := fonts[0].Font.Face(10.0, canvas.Black)
-
-	width, height := pdf.Size()
-
-	can := canvas.New(width, height)
-	ctx := canvas.NewContext(can)
-
-	txt := canvas.NewTextLine(face, string(out), canvas.Left)
-	ctx.DrawText(5, height-5, txt)
-
-	can.RenderTo(pdf)
+	return string(out)
 }
