@@ -1,15 +1,15 @@
 package grid
 
 import (
+	"fmt"
 	"math"
-	"strings"
 
 	"github.com/nobe4/seshat/internal/font"
 	"github.com/tdewolff/canvas"
 	"github.com/tdewolff/canvas/renderers/pdf"
 )
 
-type Letter struct {
+type Box struct {
 	text *canvas.Text
 	w    float64
 	h    float64
@@ -17,61 +17,99 @@ type Letter struct {
 	y    float64
 }
 
-func Test(pdf *pdf.PDF, fonts font.Fonts, features string, letters []string) {
-	if len(letters) == 0 {
-		letters = strings.Split("ABCDEFGHIJKLMNOPQRSTUVWXYZ", "")
-	}
-
-	for _, l := range letters {
-		letter(pdf, fonts, features, string(l))
-	}
-}
-
-func letter(pdf *pdf.PDF, fonts font.Fonts, features, letter string) {
-	letters := make([]Letter, 0)
+func Test(pdf *pdf.PDF, fonts font.Fonts, features string, inputs []string) {
+	width, height := pdf.Size()
 
 	gridSize := biggestGridSize(len(fonts))
+	boxes := []Box{}
+	maxW, maxH := 0.0, 0.0
 
-	for i, font := range fonts {
-		face := font.Font.Face(font.Size, canvas.Black)
-		face.Font.SetFeatures(features)
+	// TODO: do a binary search
+	// Find the smallest font size that fits the text in the grid.
+	size := fonts[0].Size
+	for {
+		boxes, maxW, maxH = prepareBoxes(size, fonts, features, inputs)
 
-		txt := canvas.NewTextLine(face, letter, canvas.Left)
+		if maxW*float64(gridSize) > width-10 {
+			size -= 1
+			continue
+		}
 
-		letters = append(letters, Letter{
-			text: txt,
-			w:    txt.Width,
-			h:    txt.Height,
-			x:    float64(i % gridSize),
-			y:    float64(i / gridSize),
-		})
+		break
 	}
 
-	biggestW := 0.0
-	biggestH := 0.0
-	for _, l := range letters {
-		if l.w > biggestW {
-			biggestW = l.w
-		}
-		if l.h > biggestH {
-			biggestH = l.h
-		}
-	}
-
-	width := biggestW * (float64(gridSize) + 0.5)
-	height := biggestH * (0.5 + float64(gridSize))
-	pdf.NewPage(width, height)
-
+	y := height - maxH
+	fontH := maxH * float64(gridSize)
 	c := canvas.New(width, height)
 	ctx := canvas.NewContext(c)
 
-	for _, l := range letters {
-		x := biggestW*0.25 + l.x*biggestW + (biggestW-l.w)/2.0
-		y := -biggestH*0.125 + height - (l.y+1.0)*biggestH
-		ctx.DrawText(x, y, l.text)
+	i := 0
+	for range len(inputs) {
+		nextY := y - fontH
+		fmt.Printf("fontH: %f  nextY: %f, y: %f\n", fontH, nextY, y)
+
+		// page break
+		if nextY < 0 {
+			c.RenderTo(pdf)
+			c = canvas.New(width, height)
+			ctx = canvas.NewContext(c)
+			pdf.NewPage(width, height)
+
+			y = height - maxH
+		}
+
+		for range len(fonts) {
+			b := boxes[i]
+			fmt.Printf("i: %d, x: %d, y: %f\n", i, i%gridSize, i/gridSize)
+
+			b.x = float64(i%gridSize) * maxW
+			b.y = y
+
+			fmt.Printf("x: %f, y: %f, i: %s\n", b.x, b.y, b.text)
+			ctx.DrawText(b.x, b.y, b.text)
+
+			i += 1
+			if i%gridSize == 0 {
+				y -= maxH
+			}
+		}
+
+		fmt.Printf("y: %f\n", y)
 	}
 
 	c.RenderTo(pdf)
+
+	pdf.NewPage(width, height)
+}
+
+func prepareBoxes(size float64, fonts font.Fonts, features string, inputs []string) ([]Box, float64, float64) {
+	boxes := []Box{}
+
+	biggestW := 0.0
+	biggestH := 0.0
+
+	for _, input := range inputs {
+		for _, font := range fonts {
+			face := font.Font.Face(size, canvas.Black)
+			face.Font.SetFeatures(features)
+
+			txt := canvas.NewTextLine(face, input, canvas.Left)
+
+			boxes = append(boxes, Box{
+				text: txt,
+				w:    txt.Width,
+				h:    txt.Height,
+			})
+			if txt.Width > biggestW {
+				biggestW = txt.Width
+			}
+			if txt.Height > biggestH {
+				biggestH = txt.Height
+			}
+		}
+	}
+
+	return boxes, biggestW, biggestH
 }
 
 func biggestGridSize(l int) int {

@@ -8,7 +8,6 @@ import (
 
 func Test(pdf *pdf.PDF, fonts font.Fonts, features string, inputs []string) {
 	width, height := pdf.Size()
-	pdf.NewPage(width, height)
 
 	y := height
 	c := canvas.New(width, height)
@@ -38,4 +37,6 @@ func Test(pdf *pdf.PDF, fonts font.Fonts, features string, inputs []string) {
 	}
 
 	c.RenderTo(pdf)
+
+	pdf.NewPage(width, height)
 }
