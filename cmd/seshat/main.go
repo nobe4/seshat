@@ -50,8 +50,9 @@ func watch(config config.Config) error {
 				}
 
 				if event.Has(fsnotify.Write) {
-					fmt.Println("Modified file:", event.Name)
-
+					fmt.Printf("\n-----\nModified file detected at %s: %s\nRe building...\n\n",
+						time.Now().Format("15:04:05"),
+						event.Name)
 					if err := run(config); err != nil {
 						fmt.Printf("error: %v\n", err)
 					}
