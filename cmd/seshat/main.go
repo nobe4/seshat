@@ -22,7 +22,11 @@ func main() {
 	configPtr := flag.String("config", "config.yaml", "path to the configuration file")
 	flag.Parse()
 
-	config := config.Read(*configPtr)
+	config, err := config.Read(*configPtr)
+	if err != nil {
+		fmt.Printf("error: %v\n", err)
+        os.Exit(1)
+	}
 
 	if err := run(config); err != nil {
 		fmt.Printf("error: %v\n", err)

@@ -1,0 +1,24 @@
+# `font` is the folder containing the fonts to test.
+font: examples/fonts/Fira-Sans
+
+# `output` is the path to the output PDF.
+output: examples/output.pdf
+
+rules:
+  # `text` writes the given text in each available font.
+  - type: text
+    features: "sups"
+    args:
+      - "testing 3.14 ff ll ii 0O"
+
+  # `grid` create a grid of all available characters in each available font.
+  - type: grid
+    features: "zero, smcp"
+    args:
+      - 01a
+
+  # `alphabet` writes the alphabet in each available font.
+  - type: alphabet
+
+  # `lorem` writes a paragraph of lorem ipsum text in each available font.
+  - type: lorem
