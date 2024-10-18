@@ -3,6 +3,7 @@ module github.com/nobe4/seshat
 go 1.23.2
 
 require (
+	github.com/fsnotify/fsnotify v1.7.0
 	github.com/tdewolff/canvas v0.0.0-20241016131410-e8e42bbd1fc2
 	gopkg.in/yaml.v3 v3.0.1
 )
@@ -20,6 +21,7 @@ require (
 	github.com/tdewolff/parse/v2 v2.7.15 // indirect
 	golang.org/x/image v0.18.0 // indirect
 	golang.org/x/net v0.24.0 // indirect
+	golang.org/x/sys v0.19.0 // indirect
 	golang.org/x/text v0.16.0 // indirect
 	star-tex.org/x/tex v0.4.0 // indirect
 )

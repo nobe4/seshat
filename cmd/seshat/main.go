@@ -6,6 +6,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/fsnotify/fsnotify"
 	"github.com/nobe4/seshat/internal/config"
 	"github.com/nobe4/seshat/internal/font"
 	"github.com/nobe4/seshat/internal/testers"
@@ -25,13 +26,65 @@ func main() {
 	config, err := config.Read(*configPtr)
 	if err != nil {
 		fmt.Printf("error: %v\n", err)
-        os.Exit(1)
-	}
-
-	if err := run(config); err != nil {
-		fmt.Printf("error: %v\n", err)
 		os.Exit(1)
 	}
+
+	if err := watch(config); err != nil {
+		fmt.Printf("error watching for changes %v\n", err)
+	}
+}
+
+func watch(config config.Config) error {
+	watcher, err := fsnotify.NewWatcher()
+	if err != nil {
+		return err
+	}
+	defer watcher.Close()
+
+	go func() {
+		for {
+			select {
+			case event, ok := <-watcher.Events:
+				if !ok {
+					return
+				}
+
+				if event.Has(fsnotify.Write) {
+					fmt.Println("Modified file:", event.Name)
+
+					if err := run(config); err != nil {
+						fmt.Printf("error: %v\n", err)
+					}
+				}
+			case err, ok := <-watcher.Errors:
+				if !ok {
+					return
+				}
+
+				fmt.Println("error:", err)
+			}
+		}
+	}()
+
+	fmt.Printf("Watching files in %s\n", config.Dir)
+	if err = watcher.Add(config.Dir); err != nil {
+		return err
+	}
+
+	fmt.Printf("Watching files in %s\n", config.Font)
+	if err = watcher.Add(config.Font); err != nil {
+		return err
+	}
+
+	watcher.Events <- fsnotify.Event{
+		Name: config.Path,
+		Op:   fsnotify.Write,
+	}
+
+	// TODO: handle shutdown more gracefully
+	<-make(chan struct{})
+
+	return nil
 }
 
 func run(c config.Config) error {
