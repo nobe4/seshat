@@ -10,6 +10,9 @@ width: 210
 # `height` is the height of the output PDF in mm.
 height: 297
 
+# `size` is the default size of the text in pt.
+size: 30
+
 rules:
   # `text` writes the given text in each available font.
   - type: text

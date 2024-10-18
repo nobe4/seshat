@@ -30,11 +30,10 @@ func Test(pdf *pdf.PDF, fonts font.Fonts, features string, letters []string) {
 func letter(pdf *pdf.PDF, fonts font.Fonts, features, letter string) {
 	letters := make([]Letter, 0)
 
-	size := 100.0
 	gridSize := biggestGridSize(len(fonts))
 
 	for i, font := range fonts {
-		face := font.Font.Face(size, canvas.Black)
+		face := font.Font.Face(font.Size, canvas.Black)
 		face.Font.SetFeatures(features)
 
 		txt := canvas.NewTextLine(face, letter, canvas.Left)
