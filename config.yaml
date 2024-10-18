@@ -7,7 +7,7 @@ output: examples/output.pdf
 rules:
   # `text` writes the given text in each available font.
   - type: text
-    features: "sups"
+    features: "zero"
     args:
       - "testing 3.14 ff ll ii 0O"
 
@@ -15,10 +15,32 @@ rules:
   - type: grid
     features: "zero, smcp"
     args:
-      - 01a
+      - 0
+      - a
+      - b
 
-  # `alphabet` writes the alphabet in each available font.
-  - type: alphabet
+  # Examples:
 
-  # `lorem` writes a paragraph of lorem ipsum text in each available font.
-  - type: lorem
+  - type: text
+    args:
+      - "a b c d e f g h i j k l m n o p q r s t u v w x y z"
+
+  - type: text
+    args:
+      - "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+
+  - type: text
+    args:
+      - "The quick brown fox jumps over a lazy dog."
+
+  - type: text
+    args:
+      - "Voix ambiguë d’un cœur qui au zéphyr préfère les jattes de kiwis."
+
+  - type: text
+    args:
+      - "Victor jagt zwölf Boxkämpfer quer über den großen Sylter Deich."
+
+  - type: text
+    args:
+      - "Pchnąć w tę łódź jeża lub ośm skrzyń fig."
