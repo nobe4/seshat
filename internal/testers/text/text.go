@@ -1,6 +1,8 @@
 package text
 
 import (
+	"fmt"
+
 	"github.com/nobe4/seshat/internal/font"
 	"github.com/tdewolff/canvas"
 	"github.com/tdewolff/canvas/renderers/pdf"
@@ -11,21 +13,33 @@ func Test(pdf *pdf.PDF, fonts font.Fonts, features string, inputs []string) {
 	pdf.NewPage(width, height)
 
 	y := height
+	c := canvas.New(width, height)
+	ctx := canvas.NewContext(c)
+
 	for _, input := range inputs {
-		c := canvas.New(width, height)
 		for _, font := range fonts {
-
-			ctx := canvas.NewContext(c)
-
 			face := font.Font.Face(font.Size, canvas.Black)
 			face.Font.SetFeatures(features)
 
 			txt := canvas.NewTextBox(face, input, width, 0.0, canvas.Left, canvas.Top, 0.0, 0.0)
+
+			nextY := y - txt.Bounds().H
+
+			if nextY < 0 {
+				c.RenderTo(pdf)
+				c = canvas.New(width, height)
+				ctx = canvas.NewContext(c)
+				pdf.NewPage(width, height)
+
+				y = height
+			}
+
+			fmt.Printf("y=%f, h=%f, newy=%f, in=%s, font=%s\n", y, txt.Bounds().H, nextY, input, font.Name)
 			ctx.DrawText(0, y, txt)
 
 			y -= txt.Bounds().H
 		}
-
-		c.RenderTo(pdf)
 	}
+
+	c.RenderTo(pdf)
 }
