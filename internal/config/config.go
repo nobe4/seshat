@@ -72,6 +72,12 @@ func findConfig(path string) (string, []byte, error) {
 		return execPath, content, nil
 	}
 
+	fullPath, err := filepath.Abs(path)
+	content, err = readConfig(fullPath)
+	if err == nil {
+		return fullPath, content, nil
+	}
+
 	fmt.Printf(warning, path)
 	return "", nil, fmt.Errorf("could not find config file from path %s", path)
 }
