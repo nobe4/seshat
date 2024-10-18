@@ -1,8 +1,8 @@
 # `font` is the folder containing the fonts to test.
-font: fonts/Fira-Sans
+font: examples/fonts/Fira-Sans
 
 # `output` is the path to the output PDF.
-output: output.pdf
+output: examples/output.pdf
 
 rules:
   # `text` writes the given text in each available font.

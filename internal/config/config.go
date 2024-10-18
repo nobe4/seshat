@@ -17,7 +17,7 @@ const warning = `
 Could not find config file '%s'.
 Make sure the file exists and is readable.
 See above for the tried paths.
-See https://github.com/nobe4/seshat/blob/main/examples/config.yaml for an example config file.
+See https://github.com/nobe4/seshat/blob/main/config.yaml for an example config file.
 
 `
 
