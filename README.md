@@ -24,7 +24,8 @@
 
 - Write a `config.yaml` file
 
-  See [config.yaml](./examples/config.yaml) for an example.
+  See [config.yaml](./examples/config.yaml) for an example, the available
+  options are and documentation.
 
 - Put `seshat` in the same directory as the `config.yaml` file.
 

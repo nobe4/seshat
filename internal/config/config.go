@@ -26,65 +26,71 @@ type Rule struct {
 	Args     []string `yaml:"args"`
 }
 
-// TODO: default config should come from ./example/config.yaml
-var DefaultConfig = Config{
-	Font:   ".",
-	Output: "output.pdf",
-	Rules: []Rule{
-		{
-			Type: "text",
-			Args: []string{
-				"The quick brown fox jumps over the lazy dog",
-				"Sphinx of black quartz, judge my vow",
-			},
-		},
-		{
-			Type: "grid",
-			Args: []string{
-				"a",
-				"b",
-				"c",
-				"test",
-			},
-		},
-		{Type: "alphabet"},
-		{Type: "lorem"},
-	},
-}
+func Read(p string) (Config, error) {
+	c := Config{}
 
-func Read(p string) Config {
-	c := DefaultConfig
-
-	cwdPath := filepath.Join(cwd(), p)
-	c.Path = cwdPath
-	content, err := os.ReadFile(cwdPath)
+	p, content, err := findConfig(p)
 	if err != nil {
-		fmt.Printf("Error reading %s: %v\n", cwdPath, err)
-
-		content, err = os.ReadFile(p)
-		if err != nil {
-			fmt.Printf("Error reading %s: %v\n", p, err)
-			return c
-		}
-		c.Path = p
+		return c, err
 	}
+
+	fmt.Printf("Found config at %s\n", p)
+	c.Path = p
 
 	if err := yaml.Unmarshal(content, &c); err != nil {
 		fmt.Printf("Error unmarshalling %s: %v\n", p, err)
-		return DefaultConfig
+		return c, err
 	}
 
 	c.Output = path.Join(path.Dir(c.Path), c.Output)
 	c.Font = path.Join(path.Dir(c.Path), c.Font)
 
-	return c
+	return c, nil
 }
 
-func cwd() string {
-	cwd, err := os.Executable()
+func findConfig(path string) (string, []byte, error) {
+	processPath := filepath.Join(processDir(), path)
+	content, err := readConfig(processPath)
+	if err == nil {
+		return processPath, content, nil
+	}
+
+	execPath := filepath.Join(execDir(), path)
+	content, err = readConfig(execPath)
+	if err == nil {
+		return execPath, content, nil
+	}
+
+	return "", nil, fmt.Errorf("could not find config file %s", path)
+}
+
+func readConfig(path string) ([]byte, error) {
+	fmt.Printf("Reading config from %s\n", path)
+
+	content, err := os.ReadFile(path)
+	if err != nil {
+		return nil, fmt.Errorf("error reading %s: %w", path, err)
+	}
+
+	return content, nil
+}
+
+func processDir() string {
+	wd, err := os.Getwd()
 
 	if err != nil {
 		fmt.Printf("Error getting current working directory: %v\n", err)
+		return "."
+	}
+
+	return wd
+}
+
+func execDir() string {
+	cwd, err := os.Executable()
+
+	if err != nil {
+		fmt.Printf("Error getting executable directory: %v\n", err)
 		return "."
 	}
 
