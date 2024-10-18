@@ -25,7 +25,7 @@ func main() {
 	config, err := config.Read(*configPtr)
 	if err != nil {
 		fmt.Printf("error: %v\n", err)
-		os.Exit(1)
+        os.Exit(1)
 	}
 
 	if err := run(config); err != nil {

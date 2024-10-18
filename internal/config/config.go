@@ -12,6 +12,15 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+const warning = `
+/!\ README /!\
+Could not find config file '%s'.
+Make sure the file exists and is readable.
+See above for the tried paths.
+See https://github.com/nobe4/seshat/blob/main/examples/config.yaml for an example config file.
+
+`
+
 type Config struct {
 	Path   string `yaml:"path"`
 	Font   string `yaml:"font"`
@@ -61,7 +70,8 @@ func findConfig(path string) (string, []byte, error) {
 		return execPath, content, nil
 	}
 
-	return "", nil, fmt.Errorf("could not find config file %s", path)
+	fmt.Printf(warning, path)
+	return "", nil, fmt.Errorf("could not find config file from path %s", path)
 }
 
 func readConfig(path string) ([]byte, error) {
