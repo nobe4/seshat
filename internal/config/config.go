@@ -22,6 +22,7 @@ See https://github.com/nobe4/seshat/blob/main/config.yaml for an example config 
 `
 
 type Config struct {
+	Dir    string `yaml:"dir"`
 	Path   string `yaml:"path"`
 	Font   string `yaml:"font"`
 	Output string `yaml:"output"`
@@ -44,6 +45,7 @@ func Read(p string) (Config, error) {
 	}
 
 	fmt.Printf("Found config at %s\n", p)
+	c.Dir = filepath.Dir(p)
 	c.Path = p
 
 	if err := yaml.Unmarshal(content, &c); err != nil {
