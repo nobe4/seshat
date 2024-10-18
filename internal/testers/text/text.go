@@ -11,21 +11,31 @@ func Test(pdf *pdf.PDF, fonts font.Fonts, features string, inputs []string) {
 	pdf.NewPage(width, height)
 
 	y := height
+	c := canvas.New(width, height)
+	ctx := canvas.NewContext(c)
+
 	for _, input := range inputs {
-		c := canvas.New(width, height)
 		for _, font := range fonts {
-
-			ctx := canvas.NewContext(c)
-
 			face := font.Font.Face(font.Size, canvas.Black)
 			face.Font.SetFeatures(features)
 
 			txt := canvas.NewTextBox(face, input, width, 0.0, canvas.Left, canvas.Top, 0.0, 0.0)
-			ctx.DrawText(0, y, txt)
 
+			nextY := y - txt.Bounds().H
+
+			if nextY < 0 {
+				c.RenderTo(pdf)
+				c = canvas.New(width, height)
+				ctx = canvas.NewContext(c)
+				pdf.NewPage(width, height)
+
+				y = height
+			}
+
+			ctx.DrawText(0, y, txt)
 			y -= txt.Bounds().H
 		}
-
-		c.RenderTo(pdf)
 	}
+
+	c.RenderTo(pdf)
 }
