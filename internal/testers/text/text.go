@@ -1,8 +1,6 @@
 package text
 
 import (
-	"fmt"
-
 	"github.com/nobe4/seshat/internal/font"
 	"github.com/tdewolff/canvas"
 	"github.com/tdewolff/canvas/renderers/pdf"
@@ -34,9 +32,7 @@ func Test(pdf *pdf.PDF, fonts font.Fonts, features string, inputs []string) {
 				y = height
 			}
 
-			fmt.Printf("y=%f, h=%f, newy=%f, in=%s, font=%s\n", y, txt.Bounds().H, nextY, input, font.Name)
 			ctx.DrawText(0, y, txt)
-
 			y -= txt.Bounds().H
 		}
 	}
