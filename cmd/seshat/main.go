@@ -109,7 +109,8 @@ func render(c config.Config) error {
 	}
 	defer f.Close()
 
-	pdf := pdf.New(f, c.Width, c.Height, &pdf.Options{
+	// TODO: allow to create a pdf without the first page
+	pdf := pdf.New(f, c.Defaults.Width, c.Defaults.Height, &pdf.Options{
 		SubsetFonts: true,
 	})
 

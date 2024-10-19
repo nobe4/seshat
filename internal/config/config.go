@@ -25,18 +25,27 @@ type Config struct {
 	Font   string `yaml:"font"`
 	Output string `yaml:"output"`
 
-	Width  float64 `yaml:"width"`
-	Height float64 `yaml:"height"`
-	Size   float64 `yaml:"size"`
+	Defaults Args `yaml:"defaults"`
 
 	Rules []Rule `yaml:"rules"`
 }
 
 type Rule struct {
-	Type     string            `yaml:"type"`
-	Features string            `yaml:"features"`
-	Inputs   []string          `yaml:"inputs"`
-	Args     map[string]string `yaml:"args"`
+	Type     string   `yaml:"type"`
+	Features string   `yaml:"features"`
+	Inputs   []string `yaml:"inputs"`
+	Args     Args     `yaml:"args"`
+}
+
+type Args struct {
+	// Common
+	Width    float64 `yaml:"width"`
+	Height   float64 `yaml:"height"`
+	Size     float64 `yaml:"size"`
+	Features string  `yaml:"features"`
+
+	// Only for grid
+	Columns int `yaml:"columns"`
 }
 
 func Read(p string) (Config, error) {
@@ -58,6 +67,8 @@ func Read(p string) (Config, error) {
 
 	c.Output = path.Join(path.Dir(c.Path), c.Output)
 	c.Font = path.Join(path.Dir(c.Path), c.Font)
+
+	c.PropagateDefaults()
 
 	return c, nil
 }
@@ -116,6 +127,36 @@ func execDir() string {
 	}
 
 	return filepath.Dir(cwd)
+}
+
+func (c *Config) PropagateDefaults() {
+	for i := range c.Rules {
+		c.Rules[i].PropagateDefaults(c.Defaults)
+	}
+}
+
+func (r *Rule) PropagateDefaults(defaults Args) {
+	if r.Args.Width == 0 {
+		r.Args.Width = defaults.Width
+	}
+
+	if r.Args.Height == 0 {
+		r.Args.Height = defaults.Height
+	}
+
+	if r.Args.Size == 0 {
+		r.Args.Size = defaults.Size
+	}
+
+	// TODO: this won't catch the case where the user wants to remove the
+	// default features
+	if r.Args.Features == "" {
+		r.Args.Features = defaults.Features
+	}
+
+	if r.Args.Columns == 0 {
+		r.Args.Columns = defaults.Columns
+	}
 }
 
 func (c Config) String() string {
