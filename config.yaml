@@ -13,28 +13,49 @@ height: 297
 # `size` is the default size of the text in pt.
 size: 30
 
+# `rules` is a list of rules to apply to the output PDF.
 rules:
+
   # `text` writes the given text in each available font.
   - type: text
-    features: "zero"
+
+    # `args` is a dictionary of arguments to pass to the rule.
     args:
-      - "testing 3.14 ff ll ii 0O"
+
+      # `features` is a comma-separated list of OpenType features.
+      # Default: none
+      features: zero, smcp
+
+    # `inputs` is a list of strings to write in the PDF.
+    # Each string is written in each available font.
+    inputs:
+      - testing 3.14 ff ll ii 0O
 
   # `grid` create a grid of all available characters in each available font.
   - type: grid
-    features: "zero, smcp"
     args:
+      # `columns` is the number of columns in the grid.
+      # Default: 3
+      columns: 3
+
+      # Other available args:
+      # features: ...
+
+    # `inputs` is a list of strings to write as a grid in the PDF.
+    # Each string is written in each available font.
+    inputs:
       - 0
       - a
       - b
+      - c
 
   # Examples:
 
   - type: text
-    args:
-      - "a b c d e f g h i j k l m n o p q r s t u v w x y z"
-      - "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
-      - "The quick brown fox jumps over a lazy dog."
-      - "Voix ambiguë d’un cœur qui au zéphyr préfère les jattes de kiwis."
-      - "Victor jagt zwölf Boxkämpfer quer über den großen Sylter Deich."
-      - "Pchnąć w tę łódź jeża lub ośm skrzyń fig."
+    inputs:
+      - a b c d e f g h i j k l m n o p q r s t u v w x y z
+      - Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+      - The quick brown fox jumps over a lazy dog.
+      - Voix ambiguë d’un cœur qui au zéphyr préfère les jattes de kiwis.
+      - Victor jagt zwölf Boxkämpfer quer über den großen Sylter Deich.
+      - Pchnąć w tę łódź jeża lub ośm skrzyń fig.

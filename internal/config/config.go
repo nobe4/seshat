@@ -33,9 +33,10 @@ type Config struct {
 }
 
 type Rule struct {
-	Type     string   `yaml:"type"`
-	Features string   `yaml:"features"`
-	Args     []string `yaml:"args"`
+	Type     string            `yaml:"type"`
+	Features string            `yaml:"features"`
+	Inputs   []string          `yaml:"inputs"`
+	Args     map[string]string `yaml:"args"`
 }
 
 func Read(p string) (Config, error) {
