@@ -113,7 +113,7 @@ func render(c config.Config) error {
 		SubsetFonts: true,
 	})
 
-	fonts, err := font.Load(c.Font, c.Size)
+	fonts, err := font.Load(c.Font)
 	if err != nil {
 		return fmt.Errorf("error loading fonts: %w", err)
 	}

@@ -1,3 +1,4 @@
+---
 # `font` is the folder containing the fonts to test.
 font: examples/fonts/Fira-Sans
 
@@ -26,28 +27,35 @@ rules:
       # Default: none
       features: zero, smcp
 
+      # `size` is the size of the text in this rule in pt.
+      # It overrides the default size.
+      size: 40
+
     # `inputs` is a list of strings to write in the PDF.
     # Each string is written in each available font.
     inputs:
       - testing 3.14 ff ll ii 0O
 
   # `grid` create a grid of all available characters in each available font.
+  # It will scale down the text to fit the grid in the PDF.
   - type: grid
     args:
+
       # `columns` is the number of columns in the grid.
       # Default: 3
       columns: 3
 
       # Other available args:
-      # features: ...
+      # features
+      # size
 
     # `inputs` is a list of strings to write as a grid in the PDF.
     # Each string is written in each available font.
     inputs:
-      - 0
       - a
       - b
       - c
+      - d
 
   # Examples:
 
@@ -59,3 +67,23 @@ rules:
       - Voix ambiguë d’un cœur qui au zéphyr préfère les jattes de kiwis.
       - Victor jagt zwölf Boxkämpfer quer über den großen Sylter Deich.
       - Pchnąć w tę łódź jeża lub ośm skrzyń fig.
+
+      # Write paragraphs with a pipe `|` at the end of the line.
+      - |
+        Lorem ipsum odor amet, consectetuer adipiscing elit. Neque montes nam
+        lorem class fringilla integer lacus pellentesque enim. Integer metus
+        integer tristique class ad montes. Maximus elit vitae lacus ac vel
+        hendrerit tristique. Blandit suscipit id non aliquet proin. Mattis
+        senectus magnis suscipit habitant a at commodo fusce. Eget dictumst dis
+        feugiat fermentum rutrum mollis mattis massa. Natoque non nostra
+        curabitur malesuada magna ligula.
+
+  - type: grid
+    args:
+      columns: 3
+      features: smcp, subs
+    inputs:
+      - 012
+      - abc
+      - éèêë
+      - çùûü

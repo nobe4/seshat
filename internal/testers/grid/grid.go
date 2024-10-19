@@ -17,10 +17,10 @@ type Box struct {
 	h    float64
 }
 
-func Test(pdf *pdf.PDF, fonts font.Fonts, c config.Config, rule config.Rule) {
+func Test(pdf *pdf.PDF, fonts font.Fonts, config config.Config, rule config.Rule) {
 	width, height := pdf.Size()
 
-	// TODO: move this into the config package.
+	// TODO: move this into the config package
 	columnsString, ok := rule.Args["columns"]
 	if !ok {
 		columnsString = "3"
@@ -37,7 +37,18 @@ func Test(pdf *pdf.PDF, fonts font.Fonts, c config.Config, rule config.Rule) {
 
 	// TODO: do a binary search
 	// Find the smallest font size that fits the text in the grid.
-	size := c.Size
+	// TODO: move this in the config parsing
+	size := config.Size
+	sizeString, ok := rule.Args["size"]
+	if ok {
+		var err error
+		size, err = strconv.ParseFloat(sizeString, 64)
+		if err != nil {
+			size = config.Size
+			fmt.Printf("error parsing size: %v\n", err)
+		}
+	}
+
 	for {
 		boxes, maxW, maxH = prepareBoxes(size, fonts, rule.Args["features"], rule.Inputs)
 
