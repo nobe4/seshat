@@ -1,7 +1,6 @@
 package grid
 
 import (
-	"fmt"
 	"math"
 
 	"github.com/nobe4/seshat/internal/config"
@@ -14,13 +13,12 @@ type Box struct {
 	text *canvas.Text
 	w    float64
 	h    float64
-	x    float64
-	y    float64
 }
 
 func Test(pdf *pdf.PDF, fonts font.Fonts, _ config.Config, rule config.Rule) {
 	width, height := pdf.Size()
 
+	columns := 2
 	gridSize := biggestGridSize(len(fonts))
 	boxes := []Box{}
 	maxW, maxH := 0.0, 0.0
@@ -31,7 +29,7 @@ func Test(pdf *pdf.PDF, fonts font.Fonts, _ config.Config, rule config.Rule) {
 	for {
 		boxes, maxW, maxH = prepareBoxes(size, fonts, rule.Features, rule.Args)
 
-		if maxW*float64(gridSize) > width-10 {
+		if float64(columns)*maxW*float64(gridSize) > width-10 {
 			size -= 1
 			continue
 		}
@@ -40,14 +38,22 @@ func Test(pdf *pdf.PDF, fonts font.Fonts, _ config.Config, rule config.Rule) {
 	}
 
 	y := height - maxH
+	currentColumn := -1
+
 	fontH := maxH * float64(gridSize)
 	c := canvas.New(width, height)
 	ctx := canvas.NewContext(c)
 
-	i := 0
-	for range len(rule.Args) {
+	for i := range len(rule.Args) {
+		currentColumn += 1
+
+		// Column break
+		if currentColumn >= columns {
+			currentColumn = 0
+			y -= maxH * float64(gridSize)
+		}
+
 		nextY := y - fontH
-		fmt.Printf("fontH: %f  nextY: %f, y: %f\n", fontH, nextY, y)
 
 		// page break
 		if nextY < 0 {
@@ -59,23 +65,18 @@ func Test(pdf *pdf.PDF, fonts font.Fonts, _ config.Config, rule config.Rule) {
 			y = height - maxH
 		}
 
-		for range len(fonts) {
-			b := boxes[i]
-			fmt.Printf("i: %d, x: %d, y: %f\n", i, i%gridSize, i/gridSize)
+		x := float64(currentColumn) * maxW * float64(gridSize)
 
-			b.x = float64(i%gridSize) * maxW
-			b.y = y
+		for j := range len(fonts) {
+			b := boxes[j+i*len(fonts)]
 
-			fmt.Printf("x: %f, y: %f, i: %s\n", b.x, b.y, b.text)
-			ctx.DrawText(b.x, b.y, b.text)
-
-			i += 1
-			if i%gridSize == 0 {
-				y -= maxH
-			}
+			ctx.DrawText(
+				x+float64(j%gridSize)*maxW,
+				y-float64(j/gridSize)*maxH,
+				b.text,
+			)
 		}
 
-		fmt.Printf("y: %f\n", y)
 	}
 
 	c.RenderTo(pdf)
