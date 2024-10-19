@@ -148,8 +148,6 @@ func (r *Rule) PropagateDefaults(defaults Args) {
 		r.Args.Size = defaults.Size
 	}
 
-	// TODO: this won't catch the case where the user wants to remove the
-	// default features
 	if r.Args.Features == "" {
 		r.Args.Features = defaults.Features
 	}

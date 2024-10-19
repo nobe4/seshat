@@ -18,7 +18,9 @@ defaults:
   size: 30
 
   # `features` is a comma-separated list of OpenType features.
-  features: # no default value, see examples.
+  # Use `normal` to disable all features.
+  # See https://en.wikipedia.org/wiki/List_of_typographic_features
+  features: normal
 
   # `columns` is the number of columns in the grid.
   # It pertains only to the `grid` rule.
@@ -47,6 +49,7 @@ rules:
     # `inputs` is a list of strings to write as a grid in the PDF.
     # Each string is written in each available font.
     inputs:
+      - 0
       - a
       - b
       - c
