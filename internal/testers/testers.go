@@ -3,13 +3,14 @@ package testers
 import (
 	"fmt"
 
+	"github.com/nobe4/seshat/internal/config"
 	"github.com/nobe4/seshat/internal/font"
 	"github.com/nobe4/seshat/internal/testers/grid"
 	"github.com/nobe4/seshat/internal/testers/text"
 	"github.com/tdewolff/canvas/renderers/pdf"
 )
 
-type TestFn func(*pdf.PDF, font.Fonts, string, []string)
+type TestFn func(*pdf.PDF, font.Fonts, config.Config, config.Rule)
 
 func Get(name string) TestFn {
 	switch name {

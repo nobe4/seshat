@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math"
 
+	"github.com/nobe4/seshat/internal/config"
 	"github.com/nobe4/seshat/internal/font"
 	"github.com/tdewolff/canvas"
 	"github.com/tdewolff/canvas/renderers/pdf"
@@ -17,7 +18,7 @@ type Box struct {
 	y    float64
 }
 
-func Test(pdf *pdf.PDF, fonts font.Fonts, features string, inputs []string) {
+func Test(pdf *pdf.PDF, fonts font.Fonts, _ config.Config, rule config.Rule) {
 	width, height := pdf.Size()
 
 	gridSize := biggestGridSize(len(fonts))
@@ -28,7 +29,7 @@ func Test(pdf *pdf.PDF, fonts font.Fonts, features string, inputs []string) {
 	// Find the smallest font size that fits the text in the grid.
 	size := fonts[0].Size
 	for {
-		boxes, maxW, maxH = prepareBoxes(size, fonts, features, inputs)
+		boxes, maxW, maxH = prepareBoxes(size, fonts, rule.Features, rule.Args)
 
 		if maxW*float64(gridSize) > width-10 {
 			size -= 1
@@ -44,7 +45,7 @@ func Test(pdf *pdf.PDF, fonts font.Fonts, features string, inputs []string) {
 	ctx := canvas.NewContext(c)
 
 	i := 0
-	for range len(inputs) {
+	for range len(rule.Args) {
 		nextY := y - fontH
 		fmt.Printf("fontH: %f  nextY: %f, y: %f\n", fontH, nextY, y)
 

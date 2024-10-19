@@ -118,11 +118,11 @@ func render(c config.Config) error {
 		return fmt.Errorf("error loading fonts: %w", err)
 	}
 
-	for _, rule := range c.Rules {
-		fmt.Printf("Running rule %s(%v)\n", rule.Type, rule.Args)
-		t := testers.Get(rule.Type)
+	for _, r := range c.Rules {
+		fmt.Printf("Running rule %s(%v)\n", r.Type, r.Args)
+		t := testers.Get(r.Type)
 		if t != nil {
-			t(pdf, fonts, rule.Features, rule.Args)
+			t(pdf, fonts, c, r)
 		}
 	}
 
