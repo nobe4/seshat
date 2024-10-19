@@ -5,14 +5,24 @@ font: examples/fonts/Fira-Sans
 # `output` is the path to the output PDF.
 output: examples/output.pdf
 
-# `width` is the width of the output PDF in mm.
-width: 210
+# `defaults` is a dictionary of default values for the rules.
+# Each rule can override these values in their args.
+defaults:
+  # `width` is the width of the output PDF in mm.
+  width: 210
 
-# `height` is the height of the output PDF in mm.
-height: 297
+  # `height` is the height of the output PDF in mm.
+  height: 297
 
-# `size` is the default size of the text in pt.
-size: 30
+  # `size` is the size of the text in pt.
+  size: 30
+
+  # `features` is a comma-separated list of OpenType features.
+  features: # no default value, see examples.
+
+  # `columns` is the number of columns in the grid.
+  # It pertains only to the `grid` rule.
+  columns: 3
 
 # `rules` is a list of rules to apply to the output PDF.
 rules:
@@ -21,14 +31,9 @@ rules:
   - type: text
 
     # `args` is a dictionary of arguments to pass to the rule.
+    # They can override the default values defined above.
     args:
-
-      # `features` is a comma-separated list of OpenType features.
-      # Default: none
       features: zero, smcp
-
-      # `size` is the size of the text in this rule in pt.
-      # It overrides the default size.
       size: 40
 
     # `inputs` is a list of strings to write in the PDF.
@@ -39,16 +44,6 @@ rules:
   # `grid` create a grid of all available characters in each available font.
   # It will scale down the text to fit the grid in the PDF.
   - type: grid
-    args:
-
-      # `columns` is the number of columns in the grid.
-      # Default: 3
-      columns: 3
-
-      # Other available args:
-      # features
-      # size
-
     # `inputs` is a list of strings to write as a grid in the PDF.
     # Each string is written in each available font.
     inputs:
@@ -80,7 +75,8 @@ rules:
 
   - type: grid
     args:
-      columns: 3
+      size: 100
+      columns: 2
       features: smcp, subs
     inputs:
       - 012

@@ -1,9 +1,7 @@
 package grid
 
 import (
-	"fmt"
 	"math"
-	"strconv"
 
 	"github.com/nobe4/seshat/internal/config"
 	"github.com/nobe4/seshat/internal/font"
@@ -20,16 +18,7 @@ type Box struct {
 func Test(pdf *pdf.PDF, fonts font.Fonts, config config.Config, rule config.Rule) {
 	width, height := pdf.Size()
 
-	// TODO: move this into the config package
-	columnsString, ok := rule.Args["columns"]
-	if !ok {
-		columnsString = "3"
-	}
-	columns, err := strconv.Atoi(columnsString)
-	if err != nil {
-		fmt.Printf("Error parsing columns: %v\n", err)
-		columns = 3
-	}
+	columns := rule.Args.Columns
 
 	gridSize := biggestGridSize(len(fonts))
 	boxes := []Box{}
@@ -37,20 +26,10 @@ func Test(pdf *pdf.PDF, fonts font.Fonts, config config.Config, rule config.Rule
 
 	// TODO: do a binary search
 	// Find the smallest font size that fits the text in the grid.
-	// TODO: move this in the config parsing
-	size := config.Size
-	sizeString, ok := rule.Args["size"]
-	if ok {
-		var err error
-		size, err = strconv.ParseFloat(sizeString, 64)
-		if err != nil {
-			size = config.Size
-			fmt.Printf("error parsing size: %v\n", err)
-		}
-	}
+	size := rule.Args.Size
 
 	for {
-		boxes, maxW, maxH = prepareBoxes(size, fonts, rule.Args["features"], rule.Inputs)
+		boxes, maxW, maxH = prepareBoxes(size, fonts, rule.Args.Features, rule.Inputs)
 
 		if float64(columns)*maxW*float64(gridSize) > width-10 {
 			size -= 1
