@@ -1,7 +1,9 @@
 package grid
 
 import (
+	"fmt"
 	"math"
+	"strconv"
 
 	"github.com/nobe4/seshat/internal/config"
 	"github.com/nobe4/seshat/internal/font"
@@ -15,19 +17,29 @@ type Box struct {
 	h    float64
 }
 
-func Test(pdf *pdf.PDF, fonts font.Fonts, _ config.Config, rule config.Rule) {
+func Test(pdf *pdf.PDF, fonts font.Fonts, c config.Config, rule config.Rule) {
 	width, height := pdf.Size()
 
-	columns := 2
+	// TODO: move this into the config package.
+	columnsString, ok := rule.Args["columns"]
+	if !ok {
+		columnsString = "3"
+	}
+	columns, err := strconv.Atoi(columnsString)
+	if err != nil {
+		fmt.Printf("Error parsing columns: %v\n", err)
+		columns = 3
+	}
+
 	gridSize := biggestGridSize(len(fonts))
 	boxes := []Box{}
 	maxW, maxH := 0.0, 0.0
 
 	// TODO: do a binary search
 	// Find the smallest font size that fits the text in the grid.
-	size := fonts[0].Size
+	size := c.Size
 	for {
-		boxes, maxW, maxH = prepareBoxes(size, fonts, rule.Features, rule.Args)
+		boxes, maxW, maxH = prepareBoxes(size, fonts, rule.Args["features"], rule.Inputs)
 
 		if float64(columns)*maxW*float64(gridSize) > width-10 {
 			size -= 1
@@ -41,10 +53,10 @@ func Test(pdf *pdf.PDF, fonts font.Fonts, _ config.Config, rule config.Rule) {
 	currentColumn := -1
 
 	fontH := maxH * float64(gridSize)
-	c := canvas.New(width, height)
-	ctx := canvas.NewContext(c)
+	can := canvas.New(width, height)
+	ctx := canvas.NewContext(can)
 
-	for i := range len(rule.Args) {
+	for i := range len(rule.Inputs) {
 		currentColumn += 1
 
 		// Column break
@@ -57,9 +69,9 @@ func Test(pdf *pdf.PDF, fonts font.Fonts, _ config.Config, rule config.Rule) {
 
 		// page break
 		if nextY < 0 {
-			c.RenderTo(pdf)
-			c = canvas.New(width, height)
-			ctx = canvas.NewContext(c)
+			can.RenderTo(pdf)
+			can = canvas.New(width, height)
+			ctx = canvas.NewContext(can)
 			pdf.NewPage(width, height)
 
 			y = height - maxH
@@ -79,8 +91,7 @@ func Test(pdf *pdf.PDF, fonts font.Fonts, _ config.Config, rule config.Rule) {
 
 	}
 
-	c.RenderTo(pdf)
-
+	can.RenderTo(pdf)
 	pdf.NewPage(width, height)
 }
 

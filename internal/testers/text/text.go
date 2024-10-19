@@ -14,10 +14,10 @@ func Test(pdf *pdf.PDF, fonts font.Fonts, _ config.Config, rule config.Rule) {
 	c := canvas.New(width, height)
 	ctx := canvas.NewContext(c)
 
-	for _, input := range rule.Args {
+	for _, input := range rule.Inputs {
 		for _, font := range fonts {
 			face := font.Font.Face(font.Size, canvas.Black)
-			face.Font.SetFeatures(rule.Features)
+			face.Font.SetFeatures(rule.Args["features"])
 
 			txt := canvas.NewTextBox(face, input, width, 0.0, canvas.Left, canvas.Top, 0.0, 0.0)
 
