@@ -13,14 +13,12 @@ type Box struct {
 	text *canvas.Text
 	w    float64
 	h    float64
-	x    float64
-	y    float64
 }
 
 func Test(pdf *pdf.PDF, fonts font.Fonts, _ config.Config, rule config.Rule) {
 	width, height := pdf.Size()
 
-	columns := 3
+	columns := 2
 	gridSize := biggestGridSize(len(fonts))
 	boxes := []Box{}
 	maxW, maxH := 0.0, 0.0
@@ -48,6 +46,8 @@ func Test(pdf *pdf.PDF, fonts font.Fonts, _ config.Config, rule config.Rule) {
 
 	for i := range len(rule.Args) {
 		currentColumn += 1
+
+		// Column break
 		if currentColumn >= columns {
 			currentColumn = 0
 			y -= maxH * float64(gridSize)
@@ -68,14 +68,13 @@ func Test(pdf *pdf.PDF, fonts font.Fonts, _ config.Config, rule config.Rule) {
 		x := float64(currentColumn) * maxW * float64(gridSize)
 
 		for j := range len(fonts) {
-			index := j + i*len(fonts)
+			b := boxes[j+i*len(fonts)]
 
-			b := boxes[index]
-
-			b.x = x + float64(j%gridSize)*maxW
-			b.y = y - float64(j/gridSize)*maxH
-
-			ctx.DrawText(b.x, b.y, b.text)
+			ctx.DrawText(
+				x+float64(j%gridSize)*maxW,
+				y-float64(j/gridSize)*maxH,
+				b.text,
+			)
 		}
 
 	}
