@@ -31,7 +31,7 @@ rules:
   - type: text
 
     # `args` is a dictionary of arguments to pass to the rule.
-    # They can override the default values defined above.
+    # They override the default values defined above.
     args:
       features: zero, smcp
       size: 40
