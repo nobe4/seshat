@@ -148,10 +148,8 @@ func (r *Rule) PropagateDefaults(defaults Args) {
 		r.Args.Size = defaults.Size
 	}
 
-	if r.Args.Features == "" {
-		if defaults.Features != "none" {
-			r.Args.Features = defaults.Features
-		}
+	if r.Args.Features == "" && defaults.Features != "none" {
+		r.Args.Features = defaults.Features
 	} else if r.Args.Features == "none" {
 		r.Args.Features = ""
 	}
