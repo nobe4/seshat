@@ -149,7 +149,11 @@ func (r *Rule) PropagateDefaults(defaults Args) {
 	}
 
 	if r.Args.Features == "" {
-		r.Args.Features = defaults.Features
+		if defaults.Features != "none" {
+			r.Args.Features = defaults.Features
+		}
+	} else if r.Args.Features == "none" {
+		r.Args.Features = ""
 	}
 
 	if r.Args.Columns == 0 {
