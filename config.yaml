@@ -22,6 +22,12 @@ defaults:
   # See https://en.wikipedia.org/wiki/List_of_typographic_features
   features: none
 
+  # `responsive` is a boolean to enable or disable the responsive mode.
+  # When enabled, the text will be scaled up and down to fit the grid in the
+  # PDF. This prevents line breaks and text overflow.
+  # It pertains only to the `text` rule.
+  responsive: false
+
   # `columns` is the number of columns in the grid.
   # It pertains only to the `grid` rule.
   columns: 3
@@ -58,8 +64,12 @@ rules:
   # Examples:
 
   - type: text
+    args:
+      responsive: true
     inputs:
-      - a b c d e f g h i j k l m n o p q r s t u v w x y z
+      - 0123456789
+      - abcdefghijklmnopqrstuvwxyz
+      - font
       - Lorem ipsum dolor sit amet, consectetur adipiscing elit.
       - The quick brown fox jumps over a lazy dog.
       - Voix ambiguë d’un cœur qui au zéphyr préfère les jattes de kiwis.
