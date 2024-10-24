@@ -39,10 +39,11 @@ type Rule struct {
 
 type Args struct {
 	// Common
-	Width    float64 `yaml:"width"`
-	Height   float64 `yaml:"height"`
-	Size     float64 `yaml:"size"`
-	Features string  `yaml:"features"`
+	Width      float64 `yaml:"width"`
+	Height     float64 `yaml:"height"`
+	Size       float64 `yaml:"size"`
+	Features   string  `yaml:"features"`
+	Responsive bool    `yaml:"responsive"`
 
 	// Only for grid
 	Columns int `yaml:"columns"`
