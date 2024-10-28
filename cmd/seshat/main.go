@@ -27,18 +27,28 @@ func run(configPath string) {
 
 		c, err := config.Read(configPath)
 		if err != nil {
-			fmt.Printf("error reading the config: %v\n", err)
+			fmt.Printf(
+				"Failed to read the config: %v\n"+
+					"Make sure the file exists, it's readable and conforms to the expected format.",
+				err,
+			)
 		} else {
 			fmt.Println(c)
 			configPath = c.Path
 		}
 
 		if err := render(c); err != nil {
-			fmt.Printf("error rendering: %v\n", err)
+			fmt.Printf("Failed to render the PDF, see error below:\n%v\n", err)
 		}
 
 		if err := waitForModification(c); err != nil {
-			fmt.Printf("error watching for changes: %v\n", err)
+			fmt.Printf(
+				"Failed to watch for changes.\n"+
+					"Not watching and exiting now.\n"+
+					"See error below:\n%v\n",
+				err,
+			)
+			return
 		}
 	}
 }
@@ -63,9 +73,10 @@ func waitForModification(c config.Config) error {
 				}
 
 				if event.Has(fsnotify.Write) {
-					fmt.Printf("Modified file detected at %s: %s\n",
+					fmt.Printf("%s was modified at %s\n",
+						event.Name,
 						time.Now().Format("15:04:05"),
-						event.Name)
+					)
 
 					modifiedChan <- struct{}{}
 				}
@@ -81,12 +92,12 @@ func waitForModification(c config.Config) error {
 
 	fmt.Printf("Watching files in %s\n", c.Dir)
 	if err = watcher.Add(c.Dir); err != nil {
-		fmt.Printf("error watching files in %s: %v\n", c.Dir, err)
+		fmt.Printf("Failed to watch files in %s: %v\n", c.Dir, err)
 	}
 
 	fmt.Printf("Watching files in %s\n", c.Font)
 	if err = watcher.Add(c.Font); err != nil {
-		fmt.Printf("error watching files in %s: %v\n", c.Font, err)
+		fmt.Printf("Failed to watch files in %s: %v\n", c.Font, err)
 	}
 
 	fmt.Println("Waiting for modification, press Ctrl+C to exit")
@@ -100,12 +111,9 @@ func waitForModification(c config.Config) error {
 }
 
 func render(c config.Config) error {
-	start := time.Now()
-	fmt.Printf("Start at %s\n", start.Format("15:04:05"))
-
 	f, err := os.Create(c.Output)
 	if err != nil {
-		return fmt.Errorf("error creating output file: %w", err)
+		return fmt.Errorf("Failed to create the output file: %w", err)
 	}
 	defer f.Close()
 
@@ -116,11 +124,10 @@ func render(c config.Config) error {
 
 	fonts, err := font.Load(c.Font)
 	if err != nil {
-		return fmt.Errorf("error loading fonts: %w", err)
+		return fmt.Errorf("Failed to load fonts: %w", err)
 	}
 
 	for _, r := range c.Rules {
-		fmt.Printf("Running rule %s(%v)\n", r.Type, r.Args)
 		t := testers.Get(r.Type)
 		if t != nil {
 			t(pdf, fonts, c, r)
@@ -128,11 +135,8 @@ func render(c config.Config) error {
 	}
 
 	if err := pdf.Close(); err != nil {
-		return fmt.Errorf("error closing pdf: %w", err)
+		return fmt.Errorf("Failed to close the PDF file: %w", err)
 	}
-
-	end := time.Now()
-	fmt.Printf("Ran at %s in %fs\n", end.Format("15:04:05"), end.Sub(start).Seconds())
 
 	return nil
 }

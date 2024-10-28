@@ -62,7 +62,10 @@ func Read(p string) (Config, error) {
 	c.Path = p
 
 	if err := yaml.Unmarshal(content, &c); err != nil {
-		fmt.Printf("Error unmarshalling %s: %v\n", p, err)
+		fmt.Printf("Failed to unmarshall the configuration file at '%s'."+
+			"Make sure it's a valid YAML file and refer to the documentation for the expected format.\n"+
+			"See error below:\n"+
+			"%v\n", p, err)
 		return c, err
 	}
 
@@ -102,7 +105,7 @@ func readConfig(path string) ([]byte, error) {
 
 	content, err := os.ReadFile(path)
 	if err != nil {
-		return nil, fmt.Errorf("error reading %s: %w", path, err)
+		return nil, fmt.Errorf("Failed to read the config file at '%s': %w", path, err)
 	}
 
 	return content, nil
@@ -112,7 +115,7 @@ func processDir() string {
 	wd, err := os.Getwd()
 
 	if err != nil {
-		fmt.Printf("Error getting current working directory: %v\n", err)
+		fmt.Printf("Failed to get the current working directory: %v\n", err)
 		return "."
 	}
 
@@ -123,7 +126,7 @@ func execDir() string {
 	cwd, err := os.Executable()
 
 	if err != nil {
-		fmt.Printf("Error getting executable directory: %v\n", err)
+		fmt.Printf("Failed to get the executable directory: %v\n", err)
 		return "."
 	}
 
@@ -163,7 +166,7 @@ func (r *Rule) PropagateDefaults(defaults Args) {
 func (c Config) String() string {
 	out, err := yaml.Marshal(c)
 	if err != nil {
-		panic(err)
+		return fmt.Sprintf("Failed to marshal the configuration: %v\n", err)
 	}
 
 	return string(out)
