@@ -20,7 +20,8 @@ type Font struct {
 type Fonts []Font
 
 var (
-	fontOrder = map[string]int{
+	noFontError = fmt.Errorf("no font found")
+	fontOrder   = map[string]int{
 		"thin":       0,
 		"extralight": 1,
 		"light":      2,
@@ -49,7 +50,7 @@ func Load(dir string) (Fonts, error) {
 
 		font, err := canvas.LoadFontFile(fPath, canvas.FontRegular)
 		if err != nil {
-			fmt.Printf("error loading font %s: %v\n", fPath, err)
+			fmt.Printf("Failed to load the font file '%s': %v\nIgnoring it.\n", fPath, err)
 			continue
 		}
 
@@ -73,7 +74,10 @@ func Load(dir string) (Fonts, error) {
 	}
 
 	if len(fonts) == 0 {
-		return nil, fmt.Errorf("no fonts found in %s", dir)
+		return nil, fmt.Errorf(
+			"Found fonts in %s.\n"+
+				"Make sure this folder has the fonts you want to load, "+
+				"or change the `font` configuration.", dir)
 	}
 
 	fonts.Sort()
