@@ -10,7 +10,7 @@ import (
 	"github.com/tdewolff/canvas/renderers/pdf"
 )
 
-type TestFn func(*pdf.PDF, font.Fonts, config.Config, config.Rule)
+type TestFn func(*pdf.PDF, font.Fonts, config.Config, config.Render)
 
 func Get(name string) TestFn {
 	switch name {

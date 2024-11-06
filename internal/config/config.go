@@ -25,19 +25,18 @@ type Config struct {
 	Font   string `yaml:"font"`
 	Output string `yaml:"output"`
 
-	Defaults Args `yaml:"defaults"`
-
-	Rules []Rule `yaml:"rules"`
+	Rules   Rules    `yaml:"rules"`
+	Renders []Render `yaml:"renders"`
 }
 
-type Rule struct {
+type Render struct {
 	Type     string   `yaml:"type"`
 	Features string   `yaml:"features"`
 	Inputs   []string `yaml:"inputs"`
-	Args     Args     `yaml:"args"`
+	Rules    Rules    `yaml:"rules"`
 }
 
-type Args struct {
+type Rules struct {
 	// Common
 	Width      float64 `yaml:"width"`
 	Height     float64 `yaml:"height"`
@@ -134,32 +133,32 @@ func execDir() string {
 }
 
 func (c *Config) PropagateDefaults() {
-	for i := range c.Rules {
-		c.Rules[i].PropagateDefaults(c.Defaults)
+	for i := range c.Renders {
+		c.Renders[i].PropagateDefaults(c.Rules)
 	}
 }
 
-func (r *Rule) PropagateDefaults(defaults Args) {
-	if r.Args.Width == 0 {
-		r.Args.Width = defaults.Width
+func (r *Render) PropagateDefaults(defaults Rules) {
+	if r.Rules.Width == 0 {
+		r.Rules.Width = defaults.Width
 	}
 
-	if r.Args.Height == 0 {
-		r.Args.Height = defaults.Height
+	if r.Rules.Height == 0 {
+		r.Rules.Height = defaults.Height
 	}
 
-	if r.Args.Size == 0 {
-		r.Args.Size = defaults.Size
+	if r.Rules.Size == 0 {
+		r.Rules.Size = defaults.Size
 	}
 
-	if r.Args.Features == "" && defaults.Features != "none" {
-		r.Args.Features = defaults.Features
-	} else if r.Args.Features == "none" {
-		r.Args.Features = ""
+	if r.Rules.Features == "" && defaults.Features != "none" {
+		r.Rules.Features = defaults.Features
+	} else if r.Rules.Features == "none" {
+		r.Rules.Features = ""
 	}
 
-	if r.Args.Columns == 0 {
-		r.Args.Columns = defaults.Columns
+	if r.Rules.Columns == 0 {
+		r.Rules.Columns = defaults.Columns
 	}
 }
 
