@@ -15,10 +15,10 @@ type Box struct {
 	h    float64
 }
 
-func Test(pdf *pdf.PDF, fonts font.Fonts, config config.Config, rule config.Rule) {
+func Test(pdf *pdf.PDF, fonts font.Fonts, config config.Config, rule config.Render) {
 	width, height := pdf.Size()
 
-	columns := rule.Args.Columns
+	columns := rule.Rules.Columns
 
 	gridSize := biggestGridSize(len(fonts))
 	boxes := []Box{}
@@ -26,10 +26,10 @@ func Test(pdf *pdf.PDF, fonts font.Fonts, config config.Config, rule config.Rule
 
 	// TODO: do a binary search
 	// Find the smallest font size that fits the text in the grid.
-	size := rule.Args.Size
+	size := rule.Rules.Size
 
 	for {
-		boxes, maxW, maxH = prepareBoxes(size, fonts, rule.Args.Features, rule.Inputs)
+		boxes, maxW, maxH = prepareBoxes(size, fonts, rule.Rules.Features, rule.Inputs)
 
 		if float64(columns)*maxW*float64(gridSize) > width-10 {
 			size -= 1

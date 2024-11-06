@@ -5,9 +5,9 @@ font: examples/fonts/Fira-Sans
 # `output` is the path to the output PDF.
 output: examples/output.pdf
 
-# `defaults` is a dictionary of default values for the rules.
-# Each rule can override these values in their args.
-defaults:
+# `rules` is a dictionary of default rules for the renders.
+# Each rule can override these values in their rules.
+rules:
   # `width` is the width of the output PDF in mm.
   width: 210
 
@@ -32,15 +32,16 @@ defaults:
   # It pertains only to the `grid` rule.
   columns: 3
 
-# `rules` is a list of rules to apply to the output PDF.
-rules:
+# `renders` is a list of render to apply to the output PDF.
+# Each render has at least a `type` and an `inputs` key.
+renders:
 
   # `text` writes the given text in each available font.
   - type: text
 
-    # `args` is a dictionary of arguments to pass to the rule.
-    # They override the default values defined above.
-    args:
+    # `rules` is a dictionary of rules to pass to the render.
+    # They override the default rules defined above.
+    rules:
       features: zero, smcp
       size: 40
 
@@ -64,7 +65,7 @@ rules:
   # Examples:
 
   - type: text
-    args:
+    rules:
       responsive: true
     inputs:
       - 0123456789
@@ -87,7 +88,7 @@ rules:
         curabitur malesuada magna ligula.
 
   - type: grid
-    args:
+    rules:
       size: 100
       columns: 2
       features: smcp, subs

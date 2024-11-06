@@ -7,8 +7,8 @@ import (
 	"github.com/tdewolff/canvas/renderers/pdf"
 )
 
-func Test(pdf *pdf.PDF, fonts font.Fonts, config config.Config, rule config.Rule) {
-	if rule.Args.Responsive {
+func Test(pdf *pdf.PDF, fonts font.Fonts, config config.Config, rule config.Render) {
+	if rule.Rules.Responsive {
 		testResponsive(pdf, fonts, config, rule)
 		return
 	}
@@ -21,8 +21,8 @@ func Test(pdf *pdf.PDF, fonts font.Fonts, config config.Config, rule config.Rule
 
 	for _, input := range rule.Inputs {
 		for _, font := range fonts {
-			face := font.Font.Face(rule.Args.Size, canvas.Black)
-			face.Font.SetFeatures(rule.Args.Features)
+			face := font.Font.Face(rule.Rules.Size, canvas.Black)
+			face.Font.SetFeatures(rule.Rules.Features)
 
 			txt := canvas.NewTextBox(face, input, width, 0.0, canvas.Left, canvas.Top, 0.0, 0.0)
 
@@ -47,7 +47,7 @@ func Test(pdf *pdf.PDF, fonts font.Fonts, config config.Config, rule config.Rule
 	pdf.NewPage(width, height)
 }
 
-func testResponsive(pdf *pdf.PDF, fonts font.Fonts, config config.Config, rule config.Rule) {
+func testResponsive(pdf *pdf.PDF, fonts font.Fonts, config config.Config, rule config.Render) {
 	width, height := pdf.Size()
 
 	y := height
@@ -60,7 +60,7 @@ func testResponsive(pdf *pdf.PDF, fonts font.Fonts, config config.Config, rule c
 			size := findFontSize(font, input, rule)
 
 			face := font.Font.Face(size, canvas.Black)
-			face.Font.SetFeatures(rule.Args.Features)
+			face.Font.SetFeatures(rule.Rules.Features)
 
 			text := canvas.NewTextLine(face, input, canvas.Left)
 
@@ -86,16 +86,16 @@ func testResponsive(pdf *pdf.PDF, fonts font.Fonts, config config.Config, rule c
 	pdf.NewPage(width, height)
 }
 
-func findFontSize(font font.Font, input string, rule config.Rule) float64 {
+func findFontSize(font font.Font, input string, rule config.Render) float64 {
 	lastValidSize := 0.0
 
 	for size := 1.0; ; size += 1.0 {
 		face := font.Font.Face(size, canvas.Black)
-		face.Font.SetFeatures(rule.Args.Features)
+		face.Font.SetFeatures(rule.Rules.Features)
 
-		txt := canvas.NewTextBox(face, input, rule.Args.Width, 0.0, canvas.Left, canvas.Top, 0.0, 0.0)
+		txt := canvas.NewTextBox(face, input, rule.Rules.Width, 0.0, canvas.Left, canvas.Top, 0.0, 0.0)
 
-		if txt.Bounds().W > rule.Args.Width-10 || txt.Bounds().H >= rule.Args.Height-10 {
+		if txt.Bounds().W > rule.Rules.Width-10 || txt.Bounds().H >= rule.Rules.Height-10 {
 			return lastValidSize
 		}
 

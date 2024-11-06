@@ -118,7 +118,7 @@ func render(c config.Config) error {
 	defer f.Close()
 
 	// TODO: allow to create a pdf without the first page
-	pdf := pdf.New(f, c.Defaults.Width, c.Defaults.Height, &pdf.Options{
+	pdf := pdf.New(f, c.Rules.Width, c.Rules.Height, &pdf.Options{
 		SubsetFonts: true,
 	})
 
@@ -127,7 +127,7 @@ func render(c config.Config) error {
 		return fmt.Errorf("Failed to load fonts: %w", err)
 	}
 
-	for _, r := range c.Rules {
+	for _, r := range c.Renders {
 		t := testers.Get(r.Type)
 		if t != nil {
 			t(pdf, fonts, c, r)
