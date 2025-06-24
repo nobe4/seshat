@@ -38,11 +38,12 @@ type Render struct {
 
 type Rules struct {
 	// Common
-	Width      float64 `yaml:"width"`
-	Height     float64 `yaml:"height"`
-	Size       float64 `yaml:"size"`
-	Features   string  `yaml:"features"`
-	Responsive bool    `yaml:"responsive"`
+	Width      float64   `yaml:"width"`
+	Height     float64   `yaml:"height"`
+	Size       float64   `yaml:"size"`
+	Margins    []float64 `yaml:"margins"`
+	Features   string    `yaml:"features"`
+	Responsive bool      `yaml:"responsive"`
 
 	// Only for grid
 	Columns int `yaml:"columns"`
@@ -72,6 +73,7 @@ func Read(p string) (Config, error) {
 	c.Font = path.Join(path.Dir(c.Path), c.Font)
 
 	c.PropagateDefaults()
+	c.computeMargins()
 
 	return c, nil
 }
@@ -151,6 +153,10 @@ func (r *Render) PropagateDefaults(defaults Rules) {
 		r.Rules.Size = defaults.Size
 	}
 
+	if len(r.Rules.Margins) == 0 {
+		r.Rules.Margins = defaults.Margins
+	}
+
 	if r.Rules.Features == "" && defaults.Features != "none" {
 		r.Rules.Features = defaults.Features
 	} else if r.Rules.Features == "none" {
@@ -159,6 +165,28 @@ func (r *Render) PropagateDefaults(defaults Rules) {
 
 	if r.Rules.Columns == 0 {
 		r.Rules.Columns = defaults.Columns
+	}
+}
+
+func (c *Config) computeMargins() {
+	for i := range c.Renders {
+		fmt.Printf("Margins %d: %v\n", i, c.Renders[i].Rules.Margins)
+		margins := c.Renders[i].Rules.Margins
+		switch len(margins) {
+		case 0:
+			c.Renders[i].Rules.Margins = []float64{0, 0, 0, 0}
+		case 1:
+			c.Renders[i].Rules.Margins = []float64{margins[0], margins[0], margins[0], margins[0]}
+		case 2:
+			c.Renders[i].Rules.Margins = []float64{margins[0], margins[1], margins[0], margins[1]}
+		case 3:
+			c.Renders[i].Rules.Margins = []float64{margins[0], margins[1], margins[2], margins[1]}
+		case 4:
+			// do nothing
+		default:
+			c.Rules.Margins = margins[:4]
+		}
+		fmt.Printf("Margins %d: %v\n", i, c.Renders[i].Rules.Margins)
 	}
 }
 
