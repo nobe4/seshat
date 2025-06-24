@@ -15,7 +15,10 @@ func Test(pdf *pdf.PDF, fonts font.Fonts, config config.Config, rule config.Rend
 
 	width, height := pdf.Size()
 
-	y := height
+	width -= rule.Rules.Margins[0] + rule.Rules.Margins[2]
+	height -= rule.Rules.Margins[1] + rule.Rules.Margins[3]
+
+	y := height - rule.Rules.Margins[1]
 	c := canvas.New(width, height)
 	ctx := canvas.NewContext(c)
 
@@ -37,7 +40,7 @@ func Test(pdf *pdf.PDF, fonts font.Fonts, config config.Config, rule config.Rend
 				y = height
 			}
 
-			ctx.DrawText(0, y, txt)
+			ctx.DrawText(rule.Rules.Margins[0], y, txt)
 			y -= txt.Bounds().H
 		}
 	}

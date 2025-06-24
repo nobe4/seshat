@@ -17,6 +17,15 @@ rules:
   # `size` is the size of the text in pt.
   size: 30
 
+  # `margins` is the margin of the text in mm.
+  # It works like CSS margin:
+  # - [ 10 ]: 10mm on all sides
+  # - [ 10, 20 ]: 10mm on top and bottom, 20mm on left and right
+  # - [ 10, 20, 30 ]: 10mm on top, 20mm on left and right, 30mm on bottom
+  # - [ 10, 20, 30, 40 ]: 10mm on top, 20mm on right, 30mm on bottom, 40mm on left
+  # Set to [ 0 ] to reset.
+  margins: [ 20 ]
+
   # `features` is a comma-separated list of OpenType features.
   # Use `none` to disable all features.
   # See https://en.wikipedia.org/wiki/List_of_typographic_features
@@ -42,12 +51,15 @@ renders:
     # `rules` is a dictionary of rules to pass to the render.
     # They override the default rules defined above.
     rules:
-      features: zero, smcp
-      size: 40
+      # features: zero, smcp
+      # size: 40
+      margins: [ 5 ]
 
     # `inputs` is a list of strings to write in the PDF.
     # Each string is written in each available font.
     inputs:
+      - testing 3.14 ff ll ii 0O
+      - testing 3.14 ff ll ii 0O
       - testing 3.14 ff ll ii 0O
 
   # `grid` create a grid of all available characters in each available font.
